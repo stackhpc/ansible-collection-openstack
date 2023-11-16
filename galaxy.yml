@@ -1,0 +1,20 @@
+namespace: stackhpc
+name: openstack
+version: 1.0.0
+readme: README.md
+authors:
+  - StackHPC Ltd
+description: Ansible collection for interacting with OpenStack clouds
+license:
+  - Apache-2.0
+tags:
+  - cloud
+  - openstack
+dependencies: {}
+repository: https://github.com/stackhpc/ansible-collection-openstack
+documentation: https://github.com/stackhpc/ansible-collection-openstack/branch/main/README.md
+homepage: https://github.com/stackhpc/ansible-collection-openstack
+issues: https://github.com/stackhpc/ansible-collection-openstack/issues
+build_ignore:
+  - "*.tar.gz"
+  - .gitignore

@@ -51,8 +51,7 @@
     name: "{{ item.name }}"
     state: latest
     virtualenv: "{{ os_openstackclient_venv or omit }}"
-    virtualenv_command: "{{ 'python' ~ ansible_facts.python.version.major ~ '.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstackclient_venv else
-      omit }}"
+    virtualenv_command: "{{ 'python3.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstackclient_venv else omit }}"
   with_items:
     - { name: pip }
     - { name: setuptools }

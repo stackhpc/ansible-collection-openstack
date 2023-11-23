@@ -2,7 +2,8 @@ OpenStack Networks
 ==================
 
 This role can be used to register networks, subnets and routers in neutron
-using the os\_network, os\_subnet and os\_router modules.
+using the `openstack.cloud.network`, `openstack.cloud.subnet` and
+`openstack.cloud.router` modules.
 
 Requirements
 ------------
@@ -15,10 +16,10 @@ Role Variables
 `os_networks_venv` is a path to a directory in which to create a virtualenv.
 
 `os_networks_auth_type` is an authentication type compatible with the
-`auth_type` argument of `os_*` Ansible modules.
+`auth_type` argument of `openstack.cloud` Ansible modules.
 
 `os_networks_auth` is a dict containing authentication information
-compatible with the `auth` argument of `os_*` Ansible modules.
+compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
 `os_networks_cacert` is an optional path to a CA certificate bundle.
 
@@ -125,7 +126,7 @@ following items:
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os_openstacksdk` role.
+This role depends on the `stackhpc.openstack.os_openstacksdk` role.
 
 Example Playbook
 ----------------
@@ -136,9 +137,9 @@ different gateway.
 
     ---
     - name: Ensure networks, subnets and routers are registered
-      hosts: neutron-api
+      hosts: localhost
       roles:
-        - role: os-networks
+        - role: stackhpc.openstack.os_networks
           os_networks_venv: "~/os-networks-venv"
           os_networks_auth_type: "password"
           os_networks_auth:

@@ -22,10 +22,10 @@ virtualenv.
 upper constraints.
 
 `os_deploy_templates_auth_type` is an authentication type compatible with
-the `auth_type` argument of `os_*` Ansible modules.
+the `auth_type` argument of `openstack.cloud` Ansible modules.
 
 `os_deploy_templates_auth` is a dict containing authentication information
-compatible with the `auth` argument of `os_*` Ansible modules.
+compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
 `os_deploy_templates_cacert` is an optional path to a CA certificate bundle.
 
@@ -43,7 +43,7 @@ item should be a dict containing following items:
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os_openstacksdk` role.
+This role depends on the `stackhpc.openstack.os_openstacksdk` role.
 
 Example Playbook
 ----------------
@@ -56,7 +56,7 @@ The following playbook registers an Ironic deploy template.
   hosts: os-clients
   tasks:
     - import_role:
-        name: stackhpc.os_deploy_templates
+        name: stackhpc.openstack.os_deploy_templates
       vars:
         os_deploy_templates_venv: "~/os-deploy_templates-venv"
         os_deploy_templates_auth_type: "password"

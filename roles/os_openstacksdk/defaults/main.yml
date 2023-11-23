@@ -3,8 +3,7 @@
 os_openstacksdk_venv:
 
 # Value to use for the pip module's `virtualenv_command` argument when creating the virtualenv
-os_openstacksdk_virtualenv_command: "{{ 'python' ~ ansible_facts.python.version.major ~ '.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstacksdk_venv
-  else omit }}"
+os_openstacksdk_virtualenv_command: "{{ 'python3.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstacksdk_venv else omit }}"
 
 # Whether to install EPEL repository package.
 os_openstacksdk_install_epel: true

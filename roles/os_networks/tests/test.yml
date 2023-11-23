@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test os_networks
+  hosts: all
   connection: local
   roles:
-    - stackhpc.os-networks
+    - stackhpc.openstack.os_networks

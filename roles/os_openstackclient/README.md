@@ -36,7 +36,7 @@ The following playbook installs openstackclient in a virtualenv.
     - name: Ensure openstackclient is installed
       hosts: localhost
       roles:
-        - role: stackhpc.os-openstackclient
+        - role: stackhpc.openstack.os_openstackclient
           os_openstackclient_venv: "~/os-openstackclient-venv"
 
 Author Information

@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test os_openstackclient role
+  hosts: all
   connection: local
   roles:
-    - stackhpc.os-openstackclient
+    - stackhpc.openstack.os_openstackclient

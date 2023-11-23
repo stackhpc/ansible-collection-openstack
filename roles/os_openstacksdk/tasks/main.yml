@@ -52,7 +52,7 @@
       when:
         - not os_openstacksdk_venv_stat.stat.exists or not os_openstacksdk_venv_stat.stat.writeable
 
-- name: Ensure the latest versions of pip and setuptools are installed  # noqa package-latest
+- name: Ensure the latest versions of pip and setuptools are installed # noqa package-latest
   ansible.builtin.pip:
     name: "{{ item.name }}"
     state: latest

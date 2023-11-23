@@ -3,10 +3,10 @@
 os_openstackclient_venv:
 
 # Whether to install EPEL repository package.
-os_openstackclient_install_epel: True
+os_openstackclient_install_epel: true
 
 # Whether to install package dependencies.
-os_openstackclient_install_package_dependencies: True
+os_openstackclient_install_package_dependencies: true
 
 # State of the openstackclient package.
 os_openstackclient_state: present

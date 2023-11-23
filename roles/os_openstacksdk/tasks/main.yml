@@ -31,7 +31,6 @@
   when: os_openstacksdk_install_package_dependencies | bool
 
 - when: os_openstacksdk_venv is not none
-
   block:
     - name: Check whether the virtualenv directory exists
       ansible.builtin.stat:
@@ -50,6 +49,7 @@
       become: true
       when:
         - not os_openstacksdk_venv_stat.stat.exists or not os_openstacksdk_venv_stat.stat.writeable
+
 - name: Ensure the latest versions of pip and setuptools are installed
   ansible.builtin.pip:
     name: "{{ item.name }}"

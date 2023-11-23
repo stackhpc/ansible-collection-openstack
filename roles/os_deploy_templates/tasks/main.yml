@@ -3,6 +3,7 @@
   ansible.builtin.set_fact:
     old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python' + ansible_python.version.major | string) }}"
 
-- ansible.builtin.import_tasks: deploy_templates.yml
+- name: Import deploy_templates.yml
+  ansible.builtin.import_tasks: deploy_templates.yml
   vars:
     ansible_python_interpreter: "{{ os_deploy_templates_venv ~ '/bin/python' if os_deploy_templates_venv != None else old_ansible_python_interpreter }}"

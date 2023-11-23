@@ -26,4 +26,4 @@ os_deploy_templates_interface:
 # - 'extra': Dict of metadata, optional.
 # - 'uuid': UUID, optional.
 # - 'state': State, optional.
-os_deploy_templates: []
+os_deploy_templates: []  # noqa var-naming[no-role-prefix]

@@ -1,7 +1,6 @@
 ---
-
 - name: Gather OS specific variables
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
     - "{{ ansible_facts.distribution }}.yml"
@@ -9,51 +8,50 @@
   tags: vars
 
 - name: Ensure EPEL repo is installed
-  yum:
+  ansible.builtin.yum:
     name: epel-release
     state: present
-  become: True
+  become: true
   when:
     - os_openstacksdk_install_epel | bool
     - ansible_facts.os_family == "RedHat"
     - ansible_facts.distribution_major_version | int == 7
 
 - name: Ensure apt cache is up to date (Debian)
-  apt:
-    update_cache: True
-  become: True
+  ansible.builtin.apt:
+    update_cache: true
+  become: true
   when: ansible_facts.os_family == "Debian"
 
 - name: Ensure required packages are installed
-  package:
+  ansible.builtin.package:
     name: "{{ os_openstacksdk_package_dependencies }}"
     state: present
   become: "{{ ansible_facts.system != 'Darwin' }}"
   when: os_openstacksdk_install_package_dependencies | bool
 
-- block:
+- when: os_openstacksdk_venv is not none
+
+  block:
     - name: Check whether the virtualenv directory exists
-      stat:
+      ansible.builtin.stat:
         path: "{{ os_openstacksdk_venv | dirname }}"
-        get_md5: False
-        get_checksum: False
-        mime: False
+        get_md5: false
+        get_checksum: false
+        mime: false
       register: os_openstacksdk_venv_stat
 
     - name: Ensure the virtualenv directory exists
-      file:
+      ansible.builtin.file:
         path: "{{ os_openstacksdk_venv | dirname }}"
         state: directory
         owner: "{{ ansible_facts.user_uid }}"
         group: "{{ ansible_facts.user_gid }}"
-      become: True
+      become: true
       when:
-        - not os_openstacksdk_venv_stat.stat.exists or
-          not os_openstacksdk_venv_stat.stat.writeable
-  when: os_openstacksdk_venv is not none
-
+        - not os_openstacksdk_venv_stat.stat.exists or not os_openstacksdk_venv_stat.stat.writeable
 - name: Ensure the latest versions of pip and setuptools are installed
-  pip:
+  ansible.builtin.pip:
     name: "{{ item.name }}"
     state: latest
     virtualenv: "{{ os_openstacksdk_venv or omit }}"
@@ -63,7 +61,7 @@
     - { name: setuptools }
 
 - name: Ensure required Python packages are installed
-  pip:
+  ansible.builtin.pip:
     name: "{{ item.name }}"
     version: "{{ item.version or omit }}"
     state: "{{ os_openstacksdk_state }}"

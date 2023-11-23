@@ -1,0 +1,6 @@
+---
+- name: Test os_openstacksdk
+  hosts: all
+  connection: local
+  roles:
+    - stackhpc.openstack.os_openstacksdk

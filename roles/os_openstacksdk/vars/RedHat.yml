@@ -1,0 +1,8 @@
+---
+# List of package dependencies.
+os_openstacksdk_package_dependencies:
+  - gcc
+  - libffi-devel
+  - openssl-devel
+  - python3-devel
+  - python3-pip

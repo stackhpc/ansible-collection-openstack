@@ -7,16 +7,6 @@
     - "{{ ansible_facts.os_family }}.yml"
   tags: vars
 
-- name: Ensure EPEL repo is installed
-  ansible.builtin.yum:
-    name: epel-release
-    state: present
-  become: true
-  when:
-    - os_openstacksdk_install_epel | bool
-    - ansible_facts.os_family == "RedHat"
-    - ansible_facts.distribution_major_version | int == 7
-
 - name: Ensure apt cache is up to date (Debian)
   ansible.builtin.apt:
     update_cache: true

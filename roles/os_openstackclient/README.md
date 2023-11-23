@@ -14,8 +14,6 @@ Role Variables
 `os_openstackclient_venv` is a path to a directory in which to create a
 virtualenv.
 
-`os_openstackclient_install_epel`: Whether to install EPEL repository package.
-
 `os_openstackclient_install_package_dependencies`: Whether to install package
 dependencies.
 

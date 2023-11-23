@@ -20,6 +20,6 @@ galaxy_info:
     - openstack
 
 dependencies:
-  - role: stackhpc.os_openstacksdk
+  - role: stackhpc.openstack.os_openstacksdk
     os_openstacksdk_venv: "{{ os_deploy_templates_venv }}"
     os_openstacksdk_upper_constraints_file: "{{ os_deploy_templates_upper_constraints_file }}"

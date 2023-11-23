@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2023 StackHPC Ltd.
@@ -8,6 +8,9 @@
 # https://review.opendev.org/c/openstack/ansible-collections-openstack/+/874755
 # Keep a copy here until it merges.
 # It requires OpenStack SDK 0.53.0.
+
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 DOCUMENTATION = r'''
 module: baremetal_deploy_template

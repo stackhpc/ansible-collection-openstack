@@ -11,7 +11,8 @@ license:
 tags:
   - cloud
   - openstack
-dependencies: {}
+dependencies:
+  "openstack.cloud": "*"
 repository: https://github.com/stackhpc/ansible-collection-openstack
 documentation: https://github.com/stackhpc/ansible-collection-openstack/branch/main/README.md
 homepage: https://github.com/stackhpc/ansible-collection-openstack

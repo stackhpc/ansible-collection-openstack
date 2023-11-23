@@ -4,4 +4,5 @@ exclude_paths:
   - .github/
 skip_list:
   - meta-runtime[unsupported-version]
+  - yaml[line-length]
 use_default_rules: true

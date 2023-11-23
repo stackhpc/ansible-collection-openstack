@@ -1,0 +1,74 @@
+---
+
+- name: Gather OS specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+    - "{{ ansible_facts.distribution }}.yml"
+    - "{{ ansible_facts.os_family }}.yml"
+  tags: vars
+
+- name: Ensure EPEL repo is installed
+  yum:
+    name: epel-release
+    state: present
+  become: True
+  when:
+    - os_openstacksdk_install_epel | bool
+    - ansible_facts.os_family == "RedHat"
+    - ansible_facts.distribution_major_version | int == 7
+
+- name: Ensure apt cache is up to date (Debian)
+  apt:
+    update_cache: True
+  become: True
+  when: ansible_facts.os_family == "Debian"
+
+- name: Ensure required packages are installed
+  package:
+    name: "{{ os_openstacksdk_package_dependencies }}"
+    state: present
+  become: "{{ ansible_facts.system != 'Darwin' }}"
+  when: os_openstacksdk_install_package_dependencies | bool
+
+- block:
+    - name: Check whether the virtualenv directory exists
+      stat:
+        path: "{{ os_openstacksdk_venv | dirname }}"
+        get_md5: False
+        get_checksum: False
+        mime: False
+      register: os_openstacksdk_venv_stat
+
+    - name: Ensure the virtualenv directory exists
+      file:
+        path: "{{ os_openstacksdk_venv | dirname }}"
+        state: directory
+        owner: "{{ ansible_facts.user_uid }}"
+        group: "{{ ansible_facts.user_gid }}"
+      become: True
+      when:
+        - not os_openstacksdk_venv_stat.stat.exists or
+          not os_openstacksdk_venv_stat.stat.writeable
+  when: os_openstacksdk_venv is not none
+
+- name: Ensure the latest versions of pip and setuptools are installed
+  pip:
+    name: "{{ item.name }}"
+    state: latest
+    virtualenv: "{{ os_openstacksdk_venv or omit }}"
+    virtualenv_command: "{{ os_openstacksdk_virtualenv_command }}"
+  with_items:
+    - { name: pip }
+    - { name: setuptools }
+
+- name: Ensure required Python packages are installed
+  pip:
+    name: "{{ item.name }}"
+    version: "{{ item.version or omit }}"
+    state: "{{ os_openstacksdk_state }}"
+    virtualenv: "{{ os_openstacksdk_venv or omit }}"
+    extra_args: "{% if os_openstacksdk_upper_constraints_file %}-c {{ os_openstacksdk_upper_constraints_file }}{% endif %}"
+  with_items:
+    - name: openstacksdk
+      version: "{{ os_openstacksdk_version }}"

@@ -1,0 +1,8 @@
+---
+# List of package dependencies.
+os_openstacksdk_package_dependencies:
+  - gcc
+  - libffi-devel
+  - openssl-devel
+  - python{{ ansible_facts.python.version.major }}-devel
+  - python{{ ansible_facts.python.version.major }}-pip

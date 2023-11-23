@@ -1,0 +1,68 @@
+---
+
+- name: Gather OS specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+    - "{{ ansible_facts.distribution }}.yml"
+    - "{{ ansible_facts.os_family }}.yml"
+  tags: vars
+
+- name: Ensure EPEL repo is installed
+  yum:
+    name: epel-release
+    state: present
+  become: True
+  when:
+    - os_openstackclient_install_epel | bool
+    - ansible_facts.os_family == "RedHat"
+    - ansible_facts.distribution_major_version | int == 7
+
+- name: Ensure required packages are installed
+  package:
+    name: "{{ os_openstackclient_package_dependencies }}"
+    state: present
+  become: "{{ ansible_facts.system != 'Darwin' }}"
+  when: os_openstackclient_install_package_dependencies | bool
+
+- block:
+    - name: Check whether the virtualenv directory exists
+      stat:
+        path: "{{ os_openstackclient_venv | dirname }}"
+        get_md5: False
+        get_checksum: False
+        mime: False
+      register: os_openstackclient_venv_stat
+
+    - name: Ensure the virtualenv directory exists
+      file:
+        path: "{{ os_openstackclient_venv | dirname }}"
+        state: directory
+        owner: "{{ ansible_facts.user_uid }}"
+        group: "{{ ansible_facts.user_gid }}"
+      become: True
+      when:
+        - not os_openstackclient_venv_stat.stat.exists or
+          not os_openstackclient_venv_stat.stat.writeable
+  when: os_openstackclient_venv is not none
+
+- name: Ensure the latest version of pip and setuptools are installed
+  pip:
+    name: "{{ item.name }}"
+    state: latest
+    virtualenv: "{{ os_openstackclient_venv or omit }}"
+    virtualenv_command: "{{ 'python' ~ ansible_facts.python.version.major ~ '.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstackclient_venv else omit }}"
+  with_items:
+    - { name: pip }
+    - { name: setuptools }
+
+- name: Ensure required Python packages are installed
+  pip:
+    name: "{{ item.name }}"
+    version: "{{ item.version or omit }}"
+    state: "{{ os_openstackclient_state }}"
+    virtualenv: "{{ os_openstackclient_venv or omit }}"
+    extra_args: "{% if os_openstackclient_upper_constraints_file %}-c {{ os_openstackclient_upper_constraints_file }}{% endif %}"
+  with_items:
+    - name: python-openstackclient
+      version: "{{ os_openstackclient_version }}"

@@ -1,0 +1,18 @@
+---
+# Path to a directory in which to create a virtualenv.
+os_openstackclient_venv:
+
+# Whether to install EPEL repository package.
+os_openstackclient_install_epel: True
+
+# Whether to install package dependencies.
+os_openstackclient_install_package_dependencies: True
+
+# State of the openstackclient package.
+os_openstackclient_state: present
+
+# Version of python-openstackclient to install, or unrestricted if empty.
+os_openstackclient_version:
+
+# Upper constraints file for installation of openstackclient.
+os_openstackclient_upper_constraints_file:

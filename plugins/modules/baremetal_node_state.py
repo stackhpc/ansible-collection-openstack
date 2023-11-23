@@ -17,9 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
+
 DOCUMENTATION = '''
 ---
-module: os_ironic_state
+module: baremetal_node_state
 short_description: Set provision state of Bare Metal Resources from OpenStack
 author: "Mark Goddard <mark@stackhpc.com>"
 extends_documentation_fragment: openstack
@@ -62,7 +65,7 @@ options:
 '''
 
 EXAMPLES = '''
-os_ironic_node:
+baremeta_node_state:
   cloud: "openstack"
   uuid: "d44666e1-35b3-4f6b-acb0-88ab7052da69"
   provision_state: provide

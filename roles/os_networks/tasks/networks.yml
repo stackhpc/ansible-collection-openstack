@@ -1,6 +1,6 @@
 ---
 - name: Ensure absent router is removed from neutron
-  os_router:
+  openstack.cloud.router:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
@@ -13,7 +13,7 @@
   when: item.state | default == 'absent'
 
 - name: Ensure network is registered with neutron
-  os_network:
+  openstack.cloud.network:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
@@ -33,7 +33,7 @@
   with_items: "{{ os_networks }}"
 
 - name: Ensure subnet is registered with neutron
-  os_subnet:
+  openstack.cloud.subnet:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
@@ -63,7 +63,7 @@
     - subnets
 
 - name: Ensure router is registered with neutron
-  os_router:
+  openstack.cloud.router:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
@@ -79,7 +79,7 @@
   when: item.state | default('present') == 'present'
 
 - name: Ensure security groups are registered with neutron
-  os_security_group:
+  openstack.cloud.security_group:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
@@ -92,7 +92,7 @@
   with_items: "{{ os_networks_security_groups }}"
 
 - name: Ensure security group rules are registered with neutron
-  os_security_group_rule:
+  openstack.cloud.security_group_rule:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"

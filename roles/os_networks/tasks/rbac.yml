@@ -1,5 +1,4 @@
 ---
-
 # openstack.cloud.neutron_rbac_policy requires IDs for networks and projects.
 # We need to do some manipulation to extract the relevant data.
 

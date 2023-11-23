@@ -106,4 +106,4 @@ os_networks_rbac: []
 #
 # Use Yoga upper constraints otherwise, to allow compatibility with python 3.10
 # https://storyboard.openstack.org/#!/story/2008577
-os_networks_upper_constraints_file: "https://releases.openstack.org/constraints/upper/{% if ansible_facts.python.version.major == 2 %}train{% else %}yoga{% endif %}"
+os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/{% if ansible_facts.python.version.major == 2 %}train{% else %}yoga{% endif %}

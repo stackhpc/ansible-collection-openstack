@@ -1,0 +1,25 @@
+---
+galaxy_info:
+  role_name: os_deploy_templates
+  author: Mark Goddard
+  description: >
+    Role to register deploy templates in OpenStack Ironic
+  company: StackHPC Ltd
+  license: GPL-3.0-only
+  min_ansible_version: 2.10
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - cloud
+    - ironic
+    - openstack
+
+dependencies:
+  - role: stackhpc.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_deploy_templates_venv }}"
+    os_openstacksdk_upper_constraints_file: "{{ os_deploy_templates_upper_constraints_file }}"

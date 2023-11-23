@@ -1,0 +1,13 @@
+---
+- name: Ensure Ironic deploy templates exist
+  baremetal_deploy_template:
+    auth_type: "{{ os_deploy_templates_auth_type }}"
+    auth: "{{ os_deploy_templates_auth }}"
+    cacert: "{{ os_deploy_templates_cacert | default(omit) }}"
+    interface: "{{ os_deploy_templates_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    steps: "{{ item.steps }}"
+    uuid: "{{ item.uuid | default(omit) }}"
+    extra: "{{ item.extra | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  loop: "{{ os_deploy_templates }}"

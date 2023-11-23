@@ -1,3 +1,4 @@
+---
 namespace: stackhpc
 name: openstack
 version: 1.0.0

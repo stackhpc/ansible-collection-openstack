@@ -1,7 +1,6 @@
 ---
 # Path to a directory in which to create a virtualenv.
 os_openstacksdk_venv:
-
 # Value to use for the pip module's `virtualenv_command` argument when creating the virtualenv
 os_openstacksdk_virtualenv_command: "{{ 'python3.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstacksdk_venv else omit }}"
 
@@ -13,6 +12,5 @@ os_openstacksdk_state: present
 
 # Version of openstacksdk to install, or unrestricted if empty.
 os_openstacksdk_version:
-
 # Upper constraints file for installation of openstacksdk.
 os_openstacksdk_upper_constraints_file:

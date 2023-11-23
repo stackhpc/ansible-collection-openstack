@@ -22,7 +22,7 @@ os_ironic_state_provision_state:
 os_ironic_state_delegate_to:
 
 # Whether to wait for the state transition to complete.
-os_ironic_state_wait: True
+os_ironic_state_wait: true
 
 # Time to wait for state transition to complete, if os_ironic_state_wait is
 # True.

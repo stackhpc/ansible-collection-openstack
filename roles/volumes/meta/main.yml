@@ -4,4 +4,3 @@ dependencies:
     os_openstacksdk_venv: "{{ os_volumes_venv }}"
   - role: stackhpc.openstack.os_openstackclient
     os_openstackclient_venv: "{{ os_volumes_venv }}"
-

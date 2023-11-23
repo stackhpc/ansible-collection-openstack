@@ -1,6 +1,6 @@
 ---
 - name: Ensure baremetal compute nodes provision states are set
-  os_ironic_state:
+  stackhpc.openstack.baremetal_node_state:
     auth_type: "{{ os_ironic_state_auth_type }}"
     auth: "{{ os_ironic_state_auth }}"
     cacert: "{{ os_ironic_state_cacert | default(omit, true) }}"

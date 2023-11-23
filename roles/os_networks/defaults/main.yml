@@ -1,0 +1,109 @@
+---
+# Path to virtualenv in which to install openstacksdk and its dependencies.
+os_networks_venv:
+
+# Authentication type compatible with the 'os_network' Ansible module's
+# auth_type argument.
+os_networks_auth_type:
+
+# Authentication parameters compatible with the 'os_network' Ansible module's
+# auth argument.
+os_networks_auth: {}
+
+# Endpoint URL type to fetch from the service catalog. Maybe be one of:
+# public, admin, or internal.
+os_networks_interface:
+
+# List of networks to create. Each item should be a dict containing the
+# following items:
+# - 'name': Name of the neutron network.
+# - 'provider_network_type': Provider type of the neutron network.
+# - 'provider_physical_network': Provider physical network of the neutron network.
+# - 'provider_segmentation_id': Provider segmentation ID of the neutron network.
+# - 'shared': Whether the neutron network is shared.
+# - 'external': Whether the neutron network is external.
+# - 'project': Optional project in which to register the network.
+# - 'state': Optional state of the network, default is 'present'.
+# - 'mtu': The maximum transmission unit (MTU) value to address fragmentation.
+#   Network will use OpenStack defaults if this option is not provided.
+#   Requires ansible >= 2.9.
+# - 'port_security_enabled': Whether port security is enabled on the network
+#   or not. Network will use OpenStack defaults if this option is not utilised.
+#   Boolean, true to enable, false otherwise. Requires ansible >= 2.8.
+# - 'dns_domain': The DNS domain value to set. Network will use Openstack
+#   defaults if this option is not provided. Requires ansible >= 2.9.
+# - 'subnets': A list of subnets to create in this network. Each item should
+#   be a dict containing the following items:
+#     - 'name: Name of the neutron subnet.
+#     - 'cidr': CIDR representation of the neutron subnet's IP network.
+#     - 'dns_nameservers': A list of DNS nameservers for the subnet.
+#     - 'extra_specs': Optional Dictionary with extra key/value pairs  
+#       passed to the API.
+#     - 'gateway_ip': IP address of the neutron subnet's gateway.
+#     - 'no_gateway_ip': Optional boolean, whether to omit a gateway IP. If
+#       unset, this will be `true` if `gateway_ip` is specified, and `false`
+#       otherwise.
+#     - 'allocation_pool_start': Start of the neutron subnet's IP allocation
+#       pool.
+#     - 'allocation_pool_end': End of the neutron subnet's IP allocation pool.
+#     - 'host_routes': list of dicts of destination and nexthop for classless 
+#       static routes to supply to hosts connected to this subnet.
+#     - 'ip_version': Optional IP version for the subnet.
+#     - 'ipv6_address_mode': Optional IPv6 address mode for the subnet.
+#     - 'ipv6_ra_mode': Optional IPv6 router advertisement mode for the subnet.
+#     - 'use_default_subnetpool': Optional boolean, whether to use the default
+#       subnet pool.
+#     - 'project': Optional project in which to register the subnet.
+#     - 'state': Optional state of the subnet, default is 'present'.
+os_networks: []
+
+# List of routers to create. Each item should be a dict containing the
+# following items:
+# - 'name': Name of the neutron router.
+# - 'interfaces': List of names of subnets to attach to the router
+#   internal interface.
+# - 'network': Unique name or ID of the external gateway network.
+# - `external_fixed_ips`: Optional list of IP address parameters for the
+#   external gateway network. Each is a dictionary with the subnet name or 
+#   subnet ID and the IP address to assign on the subnet.
+# - 'project': Optional project in which to register the router.
+# - 'state': Optional state of the router, default is 'present'.
+os_networks_routers: []
+
+# List of security groups to create. Each item should be a dict containing the
+# following items:
+# - 'name': Name of the security group.
+# - 'description': Optional description of the security group.
+# - 'state': Optional state of the security group, default is 'present'.
+# - 'project': Optional project in which to register the security group.
+# - 'rules': Optional list of rules to add to the security group. Each item
+#   should be a dict containing the following items:
+#   - 'direction': Optional direction of the rule, default is 'ingress'.
+#   - 'ethertype': Optional Ethertype of the rule, default is 'IPv4'
+#   - 'port_range_min': Optional starting port.
+#   - 'port_range_max': Optional ending port.
+#   - 'protocol': Optional IP protocol of the rule.
+#   - 'remote_group': Optional name or ID of the security group to link.
+#   - 'remote_ip_prefix': Optional source IP address prefix in CIDR notation.
+#   - 'state': Optional state of the rule, default is 'present'.
+os_networks_security_groups: []
+
+# Role-Based Access Control (RBAC)
+# List of role-based access control shares for named networks and projects.
+# See https://docs.openstack.org/neutron/latest/admin/config-rbac.html
+# for details. Each entry in the list is a dictionary containing the
+# following items:
+# - `network`: The name of the network to share. This network is normally
+#   owned by the `admin` project and not `shared` or `external`.
+# - `access`: The mode of sharing with the target project(s). Valid options
+#   are `access_as_external` and `access_as_shared`
+# - `projects`: A list of project names for sharing the named network
+#   in the designated way.
+os_networks_rbac: []
+
+# Use Train upper constraints when running with Python 2, to avoid
+# incompatibility with newer OSC releases.
+#
+# Use Yoga upper constraints otherwise, to allow compatibility with python 3.10
+# https://storyboard.openstack.org/#!/story/2008577
+os_networks_upper_constraints_file: "https://releases.openstack.org/constraints/upper/{% if ansible_facts.python.version.major == 2 %}train{% else %}yoga{% endif %}"

@@ -1,0 +1,16 @@
+---
+- name: Ensure baremetal compute nodes provision states are set
+  os_ironic_state:
+    auth_type: "{{ os_ironic_state_auth_type }}"
+    auth: "{{ os_ironic_state_auth }}"
+    cacert: "{{ os_ironic_state_cacert | default(omit, true) }}"
+    interface: "{{ os_ironic_state_interface | default(omit, true) }}"
+    name: "{{ os_ironic_state_name }}"
+    provision_state: "{{ os_ironic_state_provision_state }}"
+    timeout: "{{ os_ironic_state_timeout }}"
+    wait: "{{ os_ironic_state_wait }}"
+  delegate_to: "{{ os_ironic_state_delegate_to }}"
+  vars:
+    # NOTE: Without this, the delegate hosts's ansible_host variable will not
+    # be respected.
+    ansible_host: "{{ hostvars[os_ironic_state_delegate_to].ansible_host | default(os_ironic_state_delegate_to) }}"

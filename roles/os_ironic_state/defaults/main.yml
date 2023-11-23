@@ -1,0 +1,29 @@
+---
+# Authentication type as used by os_* modules' 'auth_type' argument.
+os_ironic_state_auth_type:
+
+# Authentication options as used by os_* modules' 'auth' argument.
+os_ironic_state_auth: {}
+
+# CA certificate as used by os_* modules' 'cacert' argument.
+os_ironic_state_cacert:
+
+# Endpoint URL type to fetch from the service catalog. Maybe be one of:
+# public, admin, or internal.
+os_networks_interface:
+
+# Name of the ironic node.
+os_ironic_state_name:
+
+# Desired provision state.
+os_ironic_state_provision_state:
+
+# Host to delegate to.
+os_ironic_state_delegate_to:
+
+# Whether to wait for the state transition to complete.
+os_ironic_state_wait: True
+
+# Time to wait for state transition to complete, if os_ironic_state_wait is
+# True.
+os_ironic_state_timeout: 1200

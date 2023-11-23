@@ -7,7 +7,7 @@ os_deploy_templates_venv:
 # Use Yoga upper constraints, to avoid incompatibility with openstacksdk
 # 0.99.0 and include support for deploy templates (included since openstacksdk
 # 0.53).
-os_deploy_templates_upper_constraints_file: "https://releases.openstack.org/constraints/upper/yoga"
+os_deploy_templates_upper_constraints_file: https://releases.openstack.org/constraints/upper/yoga
 
 # Authentication type.
 os_deploy_templates_auth_type:

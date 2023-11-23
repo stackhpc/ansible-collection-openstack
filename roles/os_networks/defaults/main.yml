@@ -55,7 +55,7 @@ os_networks_interface:
 #       subnet pool.
 #     - 'project': Optional project in which to register the subnet.
 #     - 'state': Optional state of the subnet, default is 'present'.
-os_networks: []
+os_networks: []  # noqa var-naming[no-role-prefix]
 
 # List of routers to create. Each item should be a dict containing the
 # following items:

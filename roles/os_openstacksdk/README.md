@@ -14,8 +14,6 @@ Role Variables
 `os_openstacksdk_venv` is a path to a directory in which to create a
 virtualenv.
 
-`os_openstacksdk_install_epel`: Whether to install EPEL repository package.
-
 `os_openstacksdk_install_package_dependencies`: Whether to install package
 dependencies.
 

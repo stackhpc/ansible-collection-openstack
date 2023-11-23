@@ -7,47 +7,41 @@
     - "{{ ansible_facts.os_family }}.yml"
   tags: vars
 
-- name: Ensure apt cache is up to date (Debian)
-  ansible.builtin.apt:
-    update_cache: true
-  become: true
-  when: ansible_facts.os_family == "Debian"
-
 - name: Ensure required packages are installed
   ansible.builtin.package:
-    name: "{{ os_openstacksdk_package_dependencies }}"
+    name: "{{ os_openstackclient_package_dependencies }}"
     state: present
   become: "{{ ansible_facts.system != 'Darwin' }}"
-  when: os_openstacksdk_install_package_dependencies | bool
+  when: os_openstackclient_install_package_dependencies | bool
 
 - name: Ensure the virtualenv directory exists
-  when: os_openstacksdk_venv is not none
+  when: os_openstackclient_venv is not none
   block:
     - name: Check whether the virtualenv directory exists
       ansible.builtin.stat:
-        path: "{{ os_openstacksdk_venv | dirname }}"
+        path: "{{ os_openstackclient_venv | dirname }}"
         get_md5: false
         get_checksum: false
         mime: false
-      register: os_openstacksdk_venv_stat
+      register: os_openstackclient_venv_stat
 
     - name: Ensure the virtualenv directory exists
       ansible.builtin.file:
-        path: "{{ os_openstacksdk_venv | dirname }}"
+        path: "{{ os_openstackclient_venv | dirname }}"
         state: directory
         owner: "{{ ansible_facts.user_uid }}"
         group: "{{ ansible_facts.user_gid }}"
         mode: "0700"
       become: true
       when:
-        - not os_openstacksdk_venv_stat.stat.exists or not os_openstacksdk_venv_stat.stat.writeable
+        - not os_openstackclient_venv_stat.stat.exists or not os_openstackclient_venv_stat.stat.writeable
 
-- name: Ensure the latest versions of pip and setuptools are installed # noqa package-latest
+- name: Ensure the latest version of pip and setuptools are installed # noqa: package-latest
   ansible.builtin.pip:
     name: "{{ item.name }}"
     state: latest
-    virtualenv: "{{ os_openstacksdk_venv or omit }}"
-    virtualenv_command: "{{ os_openstacksdk_virtualenv_command }}"
+    virtualenv: "{{ os_openstackclient_venv or omit }}"
+    virtualenv_command: "{{ 'python3.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstackclient_venv else omit }}"
   with_items:
     - { name: pip }
     - { name: setuptools }
@@ -56,9 +50,9 @@
   ansible.builtin.pip:
     name: "{{ item.name }}"
     version: "{{ item.version or omit }}"
-    state: "{{ os_openstacksdk_state }}"
-    virtualenv: "{{ os_openstacksdk_venv or omit }}"
-    extra_args: "{% if os_openstacksdk_upper_constraints_file %}-c {{ os_openstacksdk_upper_constraints_file }}{% endif %}"
+    state: "{{ os_openstackclient_state }}"
+    virtualenv: "{{ os_openstackclient_venv or omit }}"
+    extra_args: "{% if os_openstackclient_upper_constraints_file %}-c {{ os_openstackclient_upper_constraints_file }}{% endif %}"
   with_items:
-    - name: openstacksdk
-      version: "{{ os_openstacksdk_version }}"
+    - name: python-openstackclient
+      version: "{{ os_openstackclient_version }}"

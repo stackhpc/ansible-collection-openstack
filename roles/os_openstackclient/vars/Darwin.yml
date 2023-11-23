@@ -1,0 +1,4 @@
+---
+os_openstackclient_package_dependencies:
+  - python3
+  - virtualenv

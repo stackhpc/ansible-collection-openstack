@@ -1,17 +1,13 @@
 ---
 # Path to a directory in which to create a virtualenv.
 os_flavors_venv:
-
 # Authentication type.
 os_flavors_auth_type:
-
 # Authentication information.
 os_flavors_auth: {}
-
 # Endpoint URL type to fetch from the service catalog. Maybe be one of:
 # public, admin, or internal.
 os_flavors_interface:
-
 # List of nova flavors to register. Each item should be a dict containing the
 # following items:
 # - 'name': Name of the flavor.
@@ -24,4 +20,4 @@ os_flavors_interface:
 # - 'is_public': Whether the flavor is public.
 # - 'flavorid': ID for the flavor, optional.
 # - 'extra_specs': Dict of Nova flavor metadata, optional.
-os_flavors: []
+os_flavors: [] # noqa var-naming[no-role-prefix]

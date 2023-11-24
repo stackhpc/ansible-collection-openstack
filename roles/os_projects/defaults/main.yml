@@ -1,17 +1,13 @@
 ---
 # Path to a directory in which to create a virtualenv.
 os_projects_venv:
-
 # Authentication type as used by os_* modules' 'auth_type' argument.
 os_projects_auth_type:
-
 # Authentication options for admin as used by os_* modules' 'auth' argument.
 os_projects_admin_auth: {}
-
 # Endpoint URL type to fetch from the service catalog. Maybe be one of:
 # public, admin, or internal.
 os_projects_interface:
-
 # Environment variables for use with os_* modules.
 os_projects_environment:
   OS_IDENTITY_API_VERSION: 3
@@ -21,7 +17,6 @@ os_projects_environment:
 # - 'name': The name of the domain.
 # - 'description': Optional description for the domain.
 os_projects_domains: []
-
 # List of OpenStack projects to create.
 # Each item should be a dict containing the following items:
 # - 'name': The name of the project.
@@ -42,8 +37,7 @@ os_projects_domains: []
 #   - 'public_key': The SSH public key contents. Optional.
 #   - 'public_key_file': Path to the SSH public key on the control host.
 # 'quotas': Optional dict mapping quota names to their values.
-os_projects: []
-
+os_projects: [] # noqa var-naming[no-role-prefix]
 # Whether to use the os_quota module to define quotas. In versions of Ansible
 # prior to 2.8.3, this can fail if there is no Cinder endpoint. When supported,
 # we set this to true to use the os_quota module rather than the openstack CLI

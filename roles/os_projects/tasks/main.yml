@@ -1,15 +1,15 @@
 ---
 - name: Set a fact about the Ansible python interpreter
-  set_fact:
+  ansible.builtin.set_fact:
     old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python' + ansible_python.version.major | string) }}"
 
 - name: Set a fact to ensure Ansible uses the python interpreter in the virtualenv
-  set_fact:
+  ansible.builtin.set_fact:
     ansible_python_interpreter: "{{ os_projects_venv }}/bin/python"
   when: os_projects_venv != None
 
 - name: Ensure the domain exists
-  os_keystone_domain:
+  openstack.cloud.identity_domain:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
@@ -18,8 +18,8 @@
     name: "{{ item.name }}"
     description: "{{ item.description | default(omit) }}"
     state: present
-    enabled: True
-    wait: yes
+    enabled: true
+    wait: true
   with_items: "{{ os_projects_domains }}"
   environment: "{{ os_projects_environment }}"
 
@@ -34,7 +34,7 @@
 # against. Use the openstack CLI directly instead.
 
 - name: List OpenStack domains
-  shell: >
+  ansible.builtin.shell: >
     . {{ os_projects_venv }}/bin/activate &&
     openstack
     {% for auth_name, auth_value in os_projects_admin_auth.items() %}
@@ -48,16 +48,16 @@
     {% endif %}
     --os-interface={{ os_projects_interface | default('public', true) }}
     domain list -f json -c Name -c ID
-  changed_when: False
+  changed_when: false
   environment: "{{ os_projects_environment }}"
   register: domain_list
 
 - name: Initialise a fact mapping domain names to IDs
-  set_fact:
+  ansible.builtin.set_fact:
     os_projects_domain_to_id: {}
 
 - name: Update a fact mapping domain names to IDs
-  set_fact:
+  ansible.builtin.set_fact:
     os_projects_domain_to_id: >
       {{ os_projects_domain_to_id | combine({item.Name: item.ID}) }}
   with_items: "{{ domain_list.stdout | from_json }}"
@@ -65,7 +65,7 @@
     label: "{{ item.Name }}"
 
 - name: Fail if the project's domain was not found
-  fail:
+  ansible.builtin.fail:
     msg: >
       OpenStack domain {{ item.project_domain }} for project {{ item.name }}
       was not found.
@@ -77,7 +77,7 @@
     label: "{{ item.name }}"
 
 - name: Fail if the project's user domain was not found
-  fail:
+  ansible.builtin.fail:
     msg: >
       OpenStack domain {{ item.user_domain }} for project {{ item.name }}
       was not found.
@@ -90,7 +90,7 @@
     label: "{{ item.name }}"
 
 - name: Ensure the project exists
-  os_project:
+  openstack.cloud.project:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
@@ -100,8 +100,8 @@
     description: "{{ item.description }}"
     domain_id: "{{ domain_is_id | ternary(item.project_domain, os_projects_domain_to_id[item.project_domain]) }}"
     state: present
-    enabled: True
-    wait: yes
+    enabled: true
+    wait: true
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
   vars:
@@ -110,14 +110,14 @@
     label: "{{ item.name }}"
 
 - name: Ensure the role exists
-  os_keystone_role:
+  openstack.cloud.identity_role:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
     cloud: "{{ os_projects_cloud | default(omit) }}"
     interface: "{{ os_projects_interface | default(omit, true) }}"
     name: "{{ item }}"
-  with_items: "{{ roles }}"
+  with_items: "{{ all_roles }}"
   environment: "{{ os_projects_environment }}"
   vars:
     users: >
@@ -140,16 +140,17 @@
          sum(start=[]) |
          unique |
          list }}
-    roles: "{{ project_roles + domain_roles }}"
+    all_roles: "{{ project_roles + domain_roles }}"
 
-- include: users.yml
+- name: Include users.yml
+  ansible.builtin.include_tasks: users.yml
   with_items: "{{ os_projects }}"
   when: project.users is defined
   loop_control:
     loop_var: project
 
 - name: Ensure SSH keypairs are registered
-  os_keypair:
+  openstack.cloud.keypair:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth | combine(os_projects_user_auth_overrides) }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
@@ -162,7 +163,7 @@
   with_subelements:
     - "{{ os_projects }}"
     - keypairs
-    - skip_missing: True
+    - skip_missing: true
   environment: "{{ os_projects_environment }}"
   vars:
     # Authentication option overrides for non-admin user as used by os_*
@@ -179,7 +180,7 @@
       keypair: "{{ item.1.name }}"
 
 - name: Ensure quotas are set
-  os_quota:
+  openstack.cloud.quota:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
@@ -233,7 +234,7 @@
 # This variable is unset before we set it, and it does not appear to be
 # possible to unset a variable in Ansible.
 - name: Set a fact to reset the Ansible python interpreter
-  set_fact:
+  ansible.builtin.set_fact:
     ansible_python_interpreter: "{{ old_ansible_python_interpreter }}"
   when: os_projects_venv != None
 
@@ -242,7 +243,7 @@
 # NOTE: We're using --os-interface=public as this is the default for os_*
 # modules and we currently provide no means to override it.
 - name: Ensure quotas are set
-  shell: >
+  ansible.builtin.shell: >
     . {{ os_projects_venv }}/bin/activate &&
     openstack
     {% for auth_name, auth_value in os_projects_admin_auth.items() %}
@@ -260,20 +261,21 @@
   when:
     - not os_projects_use_os_quota | bool
     - item.quotas is defined
+  changed_when: true
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
   loop_control:
     label: "{{ item.name }}"
 
 - name: Ensure openrc environment file exists
-  template:
+  ansible.builtin.template:
     src: openrc.j2
     dest: "{{ item.1.openrc_file }}"
-    mode: 0600
+    mode: "0600"
   with_subelements:
     - "{{ os_projects }}"
     - users
-    - skip_missing: True
+    - skip_missing: true
   when: item.1.openrc_file is defined
   loop_control:
     label:

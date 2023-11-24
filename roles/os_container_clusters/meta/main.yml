@@ -2,3 +2,4 @@
 dependencies:
   - role: stackhpc.openstack.os_openstacksdk
     os_openstacksdk_venv: "{{ os_container_clusters_venv }}"
+    os_openstacksdk_upper_constraints_file: "{{ os_container_clusters_upper_constraints_file }}"

@@ -27,10 +27,14 @@ compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 templates to register. Each item should be a dict containing container cluster
 template attributes.
 
+`os_container_clusters_public`: whether to register templates as public by
+default. Default is `false`.
+
 Dependencies
 ------------
 
-This role depends on the `stackhpc.openstack.os_openstacksdk` role.
+This role depends on the `stackhpc.openstack.os_openstackclient` and
+`stackhpc.openstack.os_openstacksdk` roles.
 
 Example Playbook
 ----------------

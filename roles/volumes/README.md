@@ -57,7 +57,7 @@ The following playbook registers a cinder volume and volume type.
     - name: Ensure volumes and volume types are registered
       hosts: cinder-api
       roles:
-        - role: os-volumes
+        - role: stackhpc.openstack.os_volumes
           os_volumes_venv: "~/os-volumes-venv"
           os_volumes_auth_type: "password"
           os_volumes_auth:

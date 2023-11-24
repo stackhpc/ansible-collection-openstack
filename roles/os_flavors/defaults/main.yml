@@ -1,0 +1,27 @@
+---
+# Path to a directory in which to create a virtualenv.
+os_flavors_venv:
+
+# Authentication type.
+os_flavors_auth_type:
+
+# Authentication information.
+os_flavors_auth: {}
+
+# Endpoint URL type to fetch from the service catalog. Maybe be one of:
+# public, admin, or internal.
+os_flavors_interface:
+
+# List of nova flavors to register. Each item should be a dict containing the
+# following items:
+# - 'name': Name of the flavor.
+# - 'ram': Size of RAM (MB).
+# - 'disk': Size of disk (GB).
+# - 'vcpus': Number of vCPUs.
+# - 'ephemeral': Size of ephemeral disk (GB), optional.
+# - 'swap': Size of swap (GB), optional.
+# - 'rxtx_factor': RX/TX factor, optional.
+# - 'is_public': Whether the flavor is public.
+# - 'flavorid': ID for the flavor, optional.
+# - 'extra_specs': Dict of Nova flavor metadata, optional.
+os_flavors: []

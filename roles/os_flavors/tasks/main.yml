@@ -1,0 +1,8 @@
+---
+- name: Set a fact about the Ansible python interpreter
+  set_fact:
+    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python' + ansible_python.version.major | string) }}"
+
+- import_tasks: flavors.yml
+  vars:
+    ansible_python_interpreter: "{{ os_flavors_venv ~ '/bin/python' if os_flavors_venv != None else old_ansible_python_interpreter }}"

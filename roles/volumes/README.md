@@ -46,7 +46,7 @@ dict containing the following items:
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os_openstacksdk` role.
+This role depends on the `stackhpc.openstack.os_openstacksdk` role.
 
 Example Playbook
 ----------------

@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  #role_name: os_projects
+  author: Mark Goddard
+  description: >
+    Role to register projects, users and related resources in OpenStack
+  company: StackHPC Ltd
+  license: Apache2
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+  galaxy_tags:
+    - cloud
+    - keystone
+    - openstack
+
+dependencies:
+  - role: stackhpc.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_projects_venv }}"
+    os_openstacksdk_upper_constraints_file: "{{ os_projects_upper_constraints | default(None) }}"
+
+  - role: stackhpc.os-openstackclient
+    os_openstackclient_venv: "{{ os_projects_venv }}"
+    os_openstackclient_upper_constraints_file: "{{ os_projects_upper_constraints | default(None) }}"

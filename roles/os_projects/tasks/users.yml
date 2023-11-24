@@ -1,0 +1,100 @@
+---
+# In Ansible prior to 2.3, there was no way to prevent the os_user module from
+# updating a user's password. This prevents us from setting a default password
+# which the user may change.
+
+- name: Check whether users exist
+  os_user_facts:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    domain: "{{ project.user_domain }}"
+  environment: "{{ os_projects_environment }}"
+
+- name: Update the user list with the authenticating user
+  set_fact:
+    openstack_users: >
+      {{ openstack_users +
+         [{'name': os_projects_admin_auth.username, 'enabled': True}] }}
+  when:
+    - os_projects_auth_type == 'password'
+    - os_projects_admin_auth.get('project_name') == project.name
+
+- name: Ensure project users exist
+  os_user:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    email: "{{ item.email | default(omit) }}"
+    password: "{{ item.password }}"
+    default_project: "{{ project.name }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    state: present
+    enabled: True
+    wait: yes
+  with_items: "{{ project.users }}"
+  when: >
+    openstack_users |
+    selectattr('name', 'equalto', item.name) |
+    selectattr('enabled') |
+    list |
+    length == 0
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.name }}"
+
+- name: Ensure users have required project roles
+  os_user_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ item.0.name }}"
+    project: "{{ project.name }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - roles
+    - skip_missing: True
+  environment: "{{ os_projects_environment }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"
+
+- name: Ensure users have required domain roles
+  os_user_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ item.0.name }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
+    - skip_missing: True
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label:
+      domain: "{{ project.user_domain }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"

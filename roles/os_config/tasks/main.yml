@@ -1,15 +1,16 @@
 ---
 - name: Create OpenStack config dir
-  file:
+  ansible.builtin.file:
     dest: "{{ os_config_destination }}"
     owner: "{{ os_config_owner }}"
     group: "{{ os_config_group }}"
     state: directory
+    mode: "0770"
 
 - name: Write OpenStack cloud config
-  copy:
+  ansible.builtin.copy:
     content: "{{ os_config_content }}"
     dest: "{{ os_config_destination }}/clouds.yaml"
     owner: "{{ os_config_owner }}"
     group: "{{ os_config_group }}"
-    mode: 0660
+    mode: "0660"

@@ -1,6 +1,7 @@
 ---
-- hosts: localhost
+- name: Test os_config role
+  hosts: localhost
   vars:
     - ansible_connection: local
   roles:
-    - os-config
+    - stackhpc.openstack.os_config

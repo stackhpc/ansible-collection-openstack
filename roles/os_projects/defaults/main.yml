@@ -38,12 +38,6 @@ os_projects_domains: []
 #   - 'public_key_file': Path to the SSH public key on the control host.
 # 'quotas': Optional dict mapping quota names to their values.
 os_projects: [] # noqa var-naming[no-role-prefix]
-# Whether to use the os_quota module to define quotas. In versions of Ansible
-# prior to 2.8.3, this can fail if there is no Cinder endpoint. When supported,
-# we set this to true to use the os_quota module rather than the openstack CLI
-# to set quotas.
-os_projects_use_os_quota: "{{ ansible_version.full is version('2.8.3', '>=') }}"
-
 # Use Train upper constraints when running with Python 2, to avoid
 # incompatibility with newer OSC releases.
 os_projects_upper_constraints: "{% if ansible_python.version.major == 2 %}https://releases.openstack.org/constraints/upper/train{% endif %}"

@@ -222,7 +222,6 @@
     volumes: "{{ quotas.volumes | default(omit) }}"
     volumes_lvm: "{{ quotas.volumes_lvm | default(omit) }}"
   when:
-    - os_projects_use_os_quota | bool
     - item.quotas is defined
   with_items: "{{ os_projects }}"
   environment: "{{ os_projects_environment }}"
@@ -237,35 +236,6 @@
   ansible.builtin.set_fact:
     ansible_python_interpreter: "{{ old_ansible_python_interpreter }}"
   when: os_projects_venv != None
-
-# The os_quota module is not available in Ansible 2.2. It will be added in
-# Ansible 2.3, at which point we should use it here.
-# NOTE: We're using --os-interface=public as this is the default for os_*
-# modules and we currently provide no means to override it.
-- name: Ensure quotas are set
-  ansible.builtin.shell: >
-    . {{ os_projects_venv }}/bin/activate &&
-    openstack
-    {% for auth_name, auth_value in os_projects_admin_auth.items() %}
-    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
-    {% endfor %}
-    {% if os_projects_cacert is defined %}
-    --os-cacert='{{ os_projects_cacert }}'
-    {% endif %}
-    {% if os_projects_cloud is defined %}
-    --os-cloud='{{ os_projects_cloud }}'
-    {% endif %}
-    --os-interface=public
-    quota set {{ item.name }}
-    {% for name, value in item.quotas.items() %} --{{ name | replace('_', '-') }}={{ value }}{% endfor %}
-  when:
-    - not os_projects_use_os_quota | bool
-    - item.quotas is defined
-  changed_when: true
-  with_items: "{{ os_projects }}"
-  environment: "{{ os_projects_environment }}"
-  loop_control:
-    label: "{{ item.name }}"
 
 - name: Ensure openrc environment file exists
   ansible.builtin.template:

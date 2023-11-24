@@ -20,8 +20,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-DOCUMENTATION = '''
----
+DOCUMENTATION = r'''
 module: baremetal_node_state
 short_description: Set provision state of Bare Metal Resources from OpenStack
 author: "Mark Goddard <mark@stackhpc.com>"
@@ -64,7 +63,7 @@ options:
       required: false
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 baremeta_node_state:
   cloud: "openstack"
   uuid: "d44666e1-35b3-4f6b-acb0-88ab7052da69"
@@ -72,17 +71,9 @@ baremeta_node_state:
   delegate_to: localhost
 '''
 
-from distutils.version import StrictVersion
-
-# Store a list of import errors to report to the user.
-IMPORT_ERRORS = []
-try:
-    import openstack
-except Exception as e:
-    IMPORT_ERRORS.append(e)
-
-from ansible.module_utils.basic import *
-from ansible.module_utils.openstack import *
+from ansible_collections.openstack.cloud.plugins.module_utils.openstack import (
+    OpenStackModule
+)
 
 
 def _choose_id_value(module):
@@ -108,8 +99,8 @@ def _change_required(current_provision_state, action):
     return True
 
 
-def main():
-    argument_spec = openstack_full_argument_spec(
+class BaremetalDeployTemplateModule(OpenStackModule):
+    argument_spec = dict(
         uuid=dict(required=False),
         name=dict(required=False),
         ironic_url=dict(required=False),
@@ -118,60 +109,65 @@ def main():
         wait=dict(type='bool', required=False, default=False),
         timeout=dict(required=False, type='int', default=1800),
     )
-    module_kwargs = openstack_module_kwargs()
-    module = AnsibleModule(argument_spec, **module_kwargs)
-    # Fail if there were any exceptions when importing modules.
-    if IMPORT_ERRORS:
-        module.fail_json(msg="Import errors: %s" %
-                         ", ".join([repr(e) for e in IMPORT_ERRORS]))
+    module_kwargs = dict(
+        required_one_of=[
+            ('uuid', 'name'),
+        ],
+    )
 
-    if (module.params['auth_type'] in [None, 'None'] and
-            module.params['ironic_url'] is None):
-        module.fail_json(msg="Authentication appears disabled, Please "
-                             "define an ironic_url parameter")
+    def run(self):
+        if (self.params['auth_type'] in [None, 'None'] and
+                self.params['ironic_url'] is None):
+            self.fail_json(msg="Authentication appears disabled, Please "
+                                 "define an ironic_url parameter")
 
-    if (module.params['ironic_url'] and
-            module.params['auth_type'] in [None, 'None']):
-        module.params['auth'] = dict(
-            endpoint=module.params['ironic_url']
-        )
+        if (self.params['ironic_url'] and
+                self.params['auth_type'] in [None, 'None']):
+            self.params['auth'] = dict(
+                endpoint=self.params['ironic_url']
+            )
 
-    node_id = _choose_id_value(module)
+        node_id = _choose_id_value(self)
 
-    if not node_id:
-        module.fail_json(msg="A uuid or name value must be defined "
-                             "to use this module.")
+        if not node_id:
+            self.fail_json(msg="A uuid or name value must be defined "
+                                 "to use this module.")
 
-    try:
-        sdk, cloud = openstack_cloud_from_module(module)
-        node = cloud.get_machine(node_id)
+        try:
+            sdk, cloud = openstack_cloud_from_module(self)
+            node = cloud.get_machine(node_id)
 
-        if node is None:
-            module.fail_json(msg="node not found")
+            if node is None:
+                self.fail_json(msg="node not found")
 
-        uuid = node['uuid']
-        changed = False
-        wait = module.params['wait']
-        timeout = module.params['timeout']
-        provision_state = module.params['provision_state']
+            uuid = node['uuid']
+            changed = False
+            wait = self.params['wait']
+            timeout = self.params['timeout']
+            provision_state = self.params['provision_state']
 
-        if node['provision_state'] in [
-                'cleaning',
-                'deleting',
-                'wait call-back']:
-            module.fail_json(msg="Node is in %s state, cannot act upon the "
-                                 "request as the node is in a transition "
-                                 "state" % node['provision_state'])
+            if node['provision_state'] in [
+                    'cleaning',
+                    'deleting',
+                    'wait call-back']:
+                self.fail_json(msg="Node is in %s state, cannot act upon the "
+                                     "request as the node is in a transition "
+                                     "state" % node['provision_state'])
 
-        if _change_required(node['provision_state'], provision_state):
-            cloud.node_set_provision_state(uuid, provision_state, wait=wait,
-                                           timeout=timeout)
-            changed = True
+            if _change_required(node['provision_state'], provision_state):
+                cloud.node_set_provision_state(uuid, provision_state, wait=wait,
+                                               timeout=timeout)
+                changed = True
 
-        module.exit_json(changed=changed)
+            self.exit_json(changed=changed)
 
-    except Exception as e:
-        module.fail_json(msg=str(e))
+        except Exception as e:
+            self.fail_json(msg=str(e))
+
+
+def main():
+    module = BaremetalNodeStateModule()
+    module()
 
 
 if __name__ == "__main__":

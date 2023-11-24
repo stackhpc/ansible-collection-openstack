@@ -1,0 +1,15 @@
+---
+- name: Create OpenStack config dir
+  file:
+    dest: "{{ os_config_destination }}"
+    owner: "{{ os_config_owner }}"
+    group: "{{ os_config_group }}"
+    state: directory
+
+- name: Write OpenStack cloud config
+  copy:
+    content: "{{ os_config_content }}"
+    dest: "{{ os_config_destination }}/clouds.yaml"
+    owner: "{{ os_config_owner }}"
+    group: "{{ os_config_group }}"
+    mode: 0660

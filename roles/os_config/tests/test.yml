@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  vars:
+    - ansible_connection: local
+  roles:
+    - os-config

@@ -12,6 +12,11 @@
     interface: "{{ os_projects_interface | default(omit, true) }}"
     domain: "{{ project.user_domain }}"
   environment: "{{ os_projects_environment }}"
+  register: users_result
+
+- name: Set a fact about users
+  ansible.builtin.set_fact:
+    openstack_users: "{{ users_result.users }}"
 
 - name: Update the user list with the authenticating user
   ansible.builtin.set_fact:

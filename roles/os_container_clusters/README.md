@@ -1,13 +1,13 @@
 OpenStack Container Clusters
 ============================
 
-This role can be used to register container cluster templates in magnum
-using the magnum CLI.
+This role can be used to register container cluster templates in Magnum
+using the Magnum CLI.
 
 Requirements
 ------------
 
-The OpenStack magnum API should be accessible from the target host.
+The OpenStack Magnum API should be accessible from the target host.
 
 Role Variables
 --------------
@@ -16,21 +16,21 @@ Role Variables
 virtualenv.
 
 `os_container_clusters_auth_type` is an authentication type compatible with the
-`auth_type` argument of `os_*` Ansible modules.
+`auth_type` argument of `openstack.cloud` Ansible modules.
 
 `os_container_clusters_auth` is a dict containing authentication information
-compatible with the `auth` argument of `os_*` Ansible modules.
+compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
 `os_container_clusters_cacert` is an optional path to a CA certificate bundle.
 
-`os_container_clusters_templates` is a list of magnum container cluster
+`os_container_clusters_templates` is a list of Magnum container cluster
 templates to register. Each item should be a dict containing container cluster
 template attributes.
 
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os-shade` role.
+This role depends on the `stackhpc.openstack.os_openstacksdk` role.
 
 Example Playbook
 ----------------
@@ -41,7 +41,7 @@ The following playbook registers a cluster template.
     - name: Ensure cluster templates are registered
       hosts: localhost
       roles:
-        - role: os-container-clusters
+        - role: stackhpc.openstack.os_container_clusters
           os_container_clusters_venv: "~/os-container-clusters-venv"
           os_container_clusters_auth_type: "password"
           os_container_clusters_auth:

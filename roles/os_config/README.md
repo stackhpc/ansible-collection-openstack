@@ -1,10 +1,8 @@
-stackhpc.os-config
-==================
+stackhpc.openstack.os_config
+============================
 
-[![Build Status](https://www.travis-ci.org/stackhpc/ansible-role-os-config.svg?branch=master)](https://www.travis-ci.org/stackhpc/ansible-role-os-config)
-
-Add openstack client config file to default location of
-`/etc/openstack/clouds.yaml`
+Add OpenStack client config file to default location of
+`~/.config/openstack/clouds.yaml`
 
 Requirements
 ------------
@@ -62,7 +60,7 @@ An easy way to this example is:
     pip install -U pip
     pip install -U ansible
 
-    ansible-galaxy install stackhpc.os-config
+    ansible-galaxy install stackhpc.openstack.os_config
 
     ansible-playbook -i "localhost," -c local test.yml
 

@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  role_name: os_host_aggregates
+  author: Pierre Riteau
+  description: >
+    Role to register nova host aggregates in OpenStack
+  company: StackHPC Ltd
+  license: Apache2
+  min_ansible_version: 2.6
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+  galaxy_tags:
+    - cloud
+    - nova
+    - openstack
+
+dependencies:
+  - role: stackhpc.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_host_aggregates_venv }}"

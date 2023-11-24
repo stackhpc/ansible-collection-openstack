@@ -1,0 +1,21 @@
+---
+# Path to a directory in which to create a virtualenv.
+os_host_aggregates_venv:
+
+# Authentication type.
+os_host_aggregates_auth_type:
+
+# Authentication information.
+os_host_aggregates_auth: {}
+
+# Endpoint URL type to fetch from the service catalog. Maybe be one of:
+# public, admin, or internal.
+os_host_aggregates_interface:
+
+# List of nova host aggregates to register. Each item should be a dict containing the
+# following items:
+# - 'name': Name of the host aggregate.
+# - 'availability_zone': Name of the availability zone, optional.
+# - 'hosts': List of hosts to add to the aggregate, optional.
+# - 'metadata': Dict of key/value pairs to set on the aggregate, optional.
+os_host_aggregates: []

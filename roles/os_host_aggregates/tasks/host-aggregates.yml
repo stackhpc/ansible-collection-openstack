@@ -1,6 +1,6 @@
 ---
 - name: Ensure nova host aggregates exist
-  os_nova_host_aggregate:
+  openstack.cloud.host_aggregate:
     auth_type: "{{ os_host_aggregates_auth_type }}"
     auth: "{{ os_host_aggregates_auth }}"
     cacert: "{{ os_host_aggregates_cacert | default(omit) }}"

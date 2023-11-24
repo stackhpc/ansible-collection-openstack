@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Test os_host_aggregates role
+  hosts: all
   connection: local
   roles:
-    - stackhpc.os_host_aggregates
+    - stackhpc.openstack.os_host_aggregates

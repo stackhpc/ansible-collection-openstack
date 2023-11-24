@@ -1,7 +1,6 @@
 ---
 # Path to a directory in which to create a virtualenv.
 os_deploy_templates_venv:
-
 # Upper constraints file for installation of python dependencies.
 #
 # Use Yoga upper constraints, to avoid incompatibility with openstacksdk
@@ -11,14 +10,11 @@ os_deploy_templates_upper_constraints_file: https://releases.openstack.org/const
 
 # Authentication type.
 os_deploy_templates_auth_type:
-
 # Authentication information.
 os_deploy_templates_auth: {}
-
 # Endpoint URL type to fetch from the service catalog. Maybe be one of:
 # public, admin, or internal.
 os_deploy_templates_interface:
-
 # List of Ironic deploy templates to register. Each item should be a dict
 # containing the following items:
 # - 'name': Name of the deploy template.
@@ -26,4 +22,4 @@ os_deploy_templates_interface:
 # - 'extra': Dict of metadata, optional.
 # - 'uuid': UUID, optional.
 # - 'state': State, optional.
-os_deploy_templates: []  # noqa var-naming[no-role-prefix]
+os_deploy_templates: [] # noqa var-naming[no-role-prefix]

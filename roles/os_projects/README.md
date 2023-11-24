@@ -2,12 +2,12 @@ OpenStack Projects
 ==================
 
 This role can be used to register projects, users and related resources in
-OpenStack using the os\_\* modules.
+OpenStack using the `openstack.cloud` modules.
 
 Requirements
 ------------
 
-The OpenStack keystone API should be accessible from the target host.
+The OpenStack Keystone API should be accessible from the target host.
 
 Role Variables
 --------------
@@ -16,10 +16,10 @@ Role Variables
 virtualenv.
 
 `os_projects_auth_type` is an authentication type compatible with
-the `auth_type` argument of `os_*` Ansible modules.
+the `auth_type` argument of `openstack.cloud` Ansible modules.
 
 `os_projects_auth` is a dict containing authentication information
-compatible with the `auth` argument of `os_*` Ansible modules.
+compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
 `os_projects_cacert` is an optional path to a CA certificate bundle.
 
@@ -44,7 +44,7 @@ Each item should be a dict containing the following items:
   - `name`: The name of the user.
   - `description`: User name/description (optional)
   - `email`: User email address (optional)
-  - `password`: The user's password.
+  - `password`: The user's password. This is not updated after creation.
   - `roles`: Optional list of roles to assign to the user in the project.
   - `domain_roles`: Optional list of roles to assign to the user in the user
     domain.
@@ -62,8 +62,8 @@ is passed through to the role dependencies.
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os_openstacksdk` and
-`stackhpc.os-openstackclient` roles.
+This role depends on the `stackhpc.openstack.os_openstacksdk` and
+`stackhpc.openstack.os_openstackclient` roles.
 
 Example Playbook
 ----------------
@@ -73,11 +73,11 @@ resources.
 
     ---
     - name: Ensure OpenStack projects are registered
-      hosts: keystone
+      hosts: localhost
       roles:
-        - role: stackhpc.os-projects
+        - role: stackhpc.openstack.os_projects
           os_projects_venv: "~/os-projects-venv"
-          os_projects_upper_constraints: "https://opendev.org/openstack/requirements/raw/branch/stable/stein/upper-constraints.txt"
+          os_projects_upper_constraints: "https://opendev.org/openstack/requirements/raw/branch/stable/2023.1/upper-constraints.txt"
           os_projects_auth_type: "password"
           os_projects_auth:
             project_name: <keystone project>
@@ -100,7 +100,7 @@ resources.
                   public_key_file: /path/to/key
               quotas:
                 ram: -1
-              
+
 Author Information
 ------------------
 

@@ -12,3 +12,5 @@ os_container_clusters_templates: []
 os_container_clusters_upper_constraints_file:
 # Whether to make templates public
 os_container_clusters_public: false
+# Whether to hide templates by default
+os_container_clusters_templates_hide: false

@@ -30,6 +30,10 @@ template attributes.
 `os_container_clusters_public`: whether to register templates as public by
 default. Default is `false`.
 
+`os_container_clusters_templates_hide` (optional) whether to hide the given
+list of cluster templates by default. The `is_hidden` attribute can be used on
+individual templates to specify this as well. Default is False.
+
 Dependencies
 ------------
 

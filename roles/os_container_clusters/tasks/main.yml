@@ -1,13 +1,13 @@
 ---
 - name: Ensure magnum client is installed
-  pip:
+  ansible.builtin.pip:
     name: python-magnumclient
     state: present
     virtualenv: "{{ os_container_clusters_venv or omit }}"
   become: "{{ os_container_clusters_venv == None }}"
 
 - name: Check whether container cluster templates exist
-  shell: >
+  ansible.builtin.shell: >
     {{ os_container_clusters_venv ~ '/bin/' if os_container_clusters_venv else '' }}openstack
     {% for auth_name, auth_value in os_container_clusters_auth.items() %}
     --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
@@ -19,11 +19,11 @@
     coe cluster template show {{ item.name }} >/dev/null
   with_items: "{{ os_container_clusters_templates }}"
   register: cluster_template_show
-  changed_when: False
-  failed_when: False
+  changed_when: false
+  failed_when: false
 
 - name: Ensure container cluster templates exist
-  command: >
+  ansible.builtin.command: >
     {{ os_container_clusters_venv ~ '/bin/' if os_container_clusters_venv else '' }}openstack
     {% for auth_name, auth_value in os_container_clusters_auth.items() %}
     --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
@@ -46,3 +46,4 @@
     {% endfor %}
   with_items: "{{ cluster_template_show.results }}"
   when: item.rc != 0
+  changed_when: true

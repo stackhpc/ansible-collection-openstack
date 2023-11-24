@@ -17,7 +17,7 @@ Role Variables
 `os_volumes_venv` is a path to a directory in which to create a virtualenv.
 
 `os_volumes_auth_type` is an authentication type compatible with the
-`auth_type` argument of `os_*` Ansible modules.
+`auth_type` argument of `openstack.cloud` Ansible modules.
 
 `os_volumes_auth` is a dict containing authentication information
 compatible with the `auth` argument of `os_*` Ansible modules.

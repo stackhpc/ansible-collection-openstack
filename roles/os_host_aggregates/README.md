@@ -1,13 +1,13 @@
 OpenStack Host Aggregates
 =========================
 
-This role can be used to register host aggregates in nova using the
-os\_nova\_host\_aggregate module.
+This role can be used to register host aggregates in Nova using the
+`openstack.cloud.host_aggregate` module.
 
 Requirements
 ------------
 
-The OpenStack nova API should be accessible from the target host.
+The OpenStack Nova API should be accessible from the target host.
 
 Role Variables
 --------------
@@ -16,17 +16,17 @@ Role Variables
 virtualenv.
 
 `os_host_aggregates_auth_type` is an authentication type compatible with the
-`auth_type` argument of `os_*` Ansible modules.
+`auth_type` argument of `openstack.cloud` Ansible modules.
 
 `os_host_aggregates_auth` is a dict containing authentication information
-compatible with the `auth` argument of `os_*` Ansible modules.
+compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
 `os_host_aggregates_cacert` is an optional path to a CA certificate bundle.
 
 `os_host_aggregates_interface` is the endpoint URL type to fetch from the
 service catalog. Maybe be one of `public`, `admin`, or `internal`.
 
-`os_host_aggregates` is a list of nova host aggregates to register. Each item
+`os_host_aggregates` is a list of Nova host aggregates to register. Each item
 should be a dict containing the item 'name', and optionally:
 
 * 'availability_zone' (name of the availability zone to set on the aggregate)
@@ -36,18 +36,18 @@ should be a dict containing the item 'name', and optionally:
 Dependencies
 ------------
 
-This role depends on the `stackhpc.os_openstacksdk` role.
+This role depends on the `stackhpc.openstack.os_openstacksdk` role.
 
 Example Playbook
 ----------------
 
-The following playbook registers a nova host aggregate.
+The following playbook registers a Nova host aggregate.
 
     ---
-    - name: Ensure nova host aggregates are registered
-      hosts: nova-api
+    - name: Ensure Nova host aggregates are registered
+      hosts: localhost
       roles:
-        - role: stackhpc.os_host_aggregates
+        - role: stackhpc.openstack.os_host_aggregates
           os_host_aggregates_venv: "~/os-host-aggregates-venv"
           os_host_aggregates_auth_type: "password"
           os_host_aggregates_auth:

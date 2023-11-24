@@ -34,8 +34,9 @@ catalog. Maybe be one of `public`, `admin`, or `internal`.
 
 `os_deploy_templates` is a list of Ironic deploy templates to register. Each
 item should be a dict containing following items:
-* `name`: Name of the deploy template.
-* `steps`: List of deploy steps.
+* `name`: Name of the deploy template. Required when the deploy template is
+  created, after which the name or ID may be used.
+* `steps`: List of deploy steps. Required when the deploy template is created.
 * `extra`: Dict of metadata, optional.
 * `uuid`: UUID, optional.
 * `state`: State, optional.

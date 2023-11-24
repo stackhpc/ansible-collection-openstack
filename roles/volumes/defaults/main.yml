@@ -1,14 +1,14 @@
 ---
 # Path to virtualenv in which to install openstacksdk and its dependencies.
-os_volumes_venv: # noqa: var-naming[no-role-prefix]
+os_volumes_venv:
 
 # Authentication type compatible with the 'os_volume' Ansible module's
 # auth_type argument.
-os_volumes_auth_type: # noqa: var-naming[no-role-prefix]
+os_volumes_auth_type:
 
 # Authentication parameters compatible with the 'os_volume' Ansible module's
 # auth argument.
-os_volumes_auth: {} # noqa: var-naming[no-role-prefix]
+os_volumes_auth: {}
 
 # List of volumes to register. Each item should be a dict containing the
 # following items:
@@ -31,4 +31,4 @@ os_volumes: [] # noqa: var-naming[no-role-prefix]
 # - 'public': Whether the volume type is public, default value is 'True'.
 # - 'extra_specs': Optional dict of additional specifications for the volume
 #   type.
-os_volumes_types: [] # noqa: var-naming[no-role-prefix]
+os_volumes_types: []

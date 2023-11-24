@@ -38,6 +38,4 @@ os_projects_domains: []
 #   - 'public_key_file': Path to the SSH public key on the control host.
 # 'quotas': Optional dict mapping quota names to their values.
 os_projects: [] # noqa var-naming[no-role-prefix]
-# Use Train upper constraints when running with Python 2, to avoid
-# incompatibility with newer OSC releases.
-os_projects_upper_constraints: "{% if ansible_python.version.major == 2 %}https://releases.openstack.org/constraints/upper/train{% endif %}"
+os_projects_upper_constraints:

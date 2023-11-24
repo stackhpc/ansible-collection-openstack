@@ -1,10 +1,8 @@
 OpenStack Volumes
 =================
 
-[![Build Status](https://www.travis-ci.org/stackhpc/ansible-role-os-volumes.svg?branch=master)](https://www.travis-ci.org/stackhpc/ansible-role-os-volumes)
-
 This role can be used to register volumes and volume types in cinder using the
-os\_volume module.
+openstack.cloud.volume module.
 
 Requirements
 ------------

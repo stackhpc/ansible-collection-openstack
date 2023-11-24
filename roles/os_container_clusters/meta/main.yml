@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  #role_name: os_container_clusters
+  author: Mark Goddard
+  description: >
+    Role to register magnum container cluster resources
+  company: StackHPC Ltd
+  license: Apache2
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+  galaxy_tags:
+    - cloud
+    - keystone
+    - openstack
+
+dependencies:
+  - role: stackhpc.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_container_clusters_venv }}"

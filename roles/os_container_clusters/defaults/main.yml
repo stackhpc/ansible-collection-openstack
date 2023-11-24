@@ -1,0 +1,13 @@
+---
+# Path to a directory in which to create a virtualenv.
+os_container_clusters_venv:
+
+# Authentication type.
+os_container_clusters_auth_type:
+
+# Authentication information.
+os_container_clusters_auth: {}
+
+# List of magnum container cluster templates. Each item should be a dict
+# mapping container cluster template attribute names to their values.
+os_container_clusters_templates: []

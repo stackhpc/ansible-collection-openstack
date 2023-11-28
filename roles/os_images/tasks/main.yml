@@ -1,17 +1,20 @@
 ---
 - name: Set a fact about the Ansible python interpreter
-  set_fact:
+  ansible.builtin.set_fact:
     old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python' + ansible_facts.python.version.major | string) }}"
 
-- import_tasks: images.yml
+- name: Build or download images
+  ansible.builtin.import_tasks: images.yml
   when: os_images_build | bool
 
-- import_tasks: upload.yml
+- name: Upload images
+  ansible.builtin.import_tasks: upload.yml
   vars:
     ansible_python_interpreter: "{{ os_images_venv ~ '/bin/python' if os_images_venv != None else old_ansible_python_interpreter }}"
   when: os_images_upload | bool
 
-- import_tasks: promote.yml
+- name: Promote or hide/retire images
+  ansible.builtin.import_tasks: promote.yml
   vars:
     ansible_python_interpreter: "{{ os_images_venv ~ '/bin/python' if os_images_venv != None else old_ansible_python_interpreter }}"
     when: >

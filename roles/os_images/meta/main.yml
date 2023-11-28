@@ -1,0 +1,34 @@
+---
+galaxy_info:
+  #role_name: os_images
+  author: Stig Telfer
+  description: >
+    Role to generate guest instance images and upload to OpenStack
+  company: StackHPC Ltd
+  license: Apache2
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - cloud
+    - keystone
+    - openstack
+
+dependencies:
+  - role: stackhpc.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_images_venv }}"
+    os_openstacksdk_state: "{{ os_images_package_state }}"
+    os_openstacksdk_upper_constraints_file: "{{ os_images_upper_constraints_file }}"
+
+  - role: stackhpc.os-openstackclient
+    os_openstackclient_venv: "{{ os_images_venv }}"
+    os_openstackclient_state: "{{ os_images_package_state }}"
+    os_openstackclient_upper_constraints_file: "{{ os_images_upper_constraints_file }}"

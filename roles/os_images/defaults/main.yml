@@ -1,0 +1,109 @@
+---
+# List of additional host package dependencies to install.
+os_images_package_dependencies_extra: []
+
+# Path to virtualenv in which to install python dependencies to upload images.
+os_images_venv:
+
+# Path to virtualenv in which to install DIB to build images.
+os_images_dib_venv: "{{ os_images_venv }}"
+
+# State of python dependencies.
+os_images_package_state: present
+
+# Upper constraints file for installation of python dependencies to upload
+# images.
+#
+# Use Train upper constraints when running with Python 2, to avoid
+# incompatibility with newer OSC releases. Use Yoga upper constraints
+# otherwise, to avoid incompatibility with openstacksdk 0.99.0.
+os_images_upper_constraints_file: "https://releases.openstack.org/constraints/upper/{% if ansible_facts.python.version.major == 2 %}train{% else %}yoga{% endif %}"
+
+# Upper constraints file for installation of DIB to build images.
+os_images_dib_upper_constraints_file: ""
+
+# Path to a directory in which to cache build artefacts.
+os_images_cache: "{{ lookup('env','HOME') }}/disk_images"
+
+# List of paths of site-specific diskimage-builder elements
+# os_images_elements: [ "{{ playbook_dir }}/stackhpc-image-elements" ]
+os_images_elements: []
+
+# Common elements to include in all images
+os_images_common: cloud-init enable-serial-console stable-interface-names
+
+# Example image definition:
+# os_images_list:
+#   - name: CentOS7-OFED4
+#     elements:
+#       - centos7
+#       - mlnx-ofed
+#     size: 3GB
+#     properties:
+#       os_distro: centos
+#     env:
+#       DIB_XXX: yyy
+#     packages:
+#       - biosdevname
+#     type: qcow2
+#   - name: FedoraAtomic27
+#     image_url: https://ftp.icm.edu.pl/pub/Linux/dist/fedora-alt/atomic/stable/Fedora-Atomic-27-20180326.1/CloudImages/x86_64/images/Fedora-Atomic-27-20180326.1.x86_64.qcow2
+#     properties:
+#       os_distro: fedora-atomic
+#     type: qcow2
+os_images_list: []
+
+# Common properties to apply to all glance images.
+os_images_common_properties:
+  cpu_arch: x86_64
+
+# OpenStack authentication type: passed to the os_image Ansible module
+os_images_auth_type: password
+
+# OpenStack authentication credentials:
+# For example, take OpenStack authentication credentials from the environment
+#os_images_auth:
+#  auth_url:     "{{ lookup('env','OS_AUTH_URL') }}"
+#  username:     "{{ lookup('env','OS_USERNAME') }}"
+#  password:     "{{ lookup('env','OS_PASSWORD') }}"
+#  project_name: "{{ lookup('env','OS_TENANT_NAME') }}"
+os_images_auth:
+
+# Endpoint URL type to fetch from the service catalog. Maybe be one of:
+# public, admin, or internal.
+os_images_interface:
+
+# Default region for OpenStack endpoint.
+os_images_region:
+
+# Pin to a specific version of diskimage-builder if required
+os_images_dib_version:
+
+# Customise the name parameter passed to the ansible.builtin.pip module.
+os_images_dib_pkg_name: diskimage-builder
+
+# List of git repositories containing site-specific diskimage-builder elements.
+# Each item should be a dict containing 'repo', 'local', and optionally,
+# 'version' items.
+os_images_git_elements: []
+
+# Whether to upload built images to Glance.
+os_images_upload: True
+
+# Whether or not the images should be rebuilt if they already exist
+os_images_force_rebuild: False
+
+# Whether images should be public (requires admin rights)
+os_images_public: True
+
+# Whether or not should old images be retired and new images be promoted
+os_images_promote: False
+
+# Whether or not to build the images
+os_images_build: True
+
+# Image suffix which would be removed during image promotion for exmple: -rc, -dev, -test
+os_images_name_suffix:
+
+# Whether or not to hide the images in Glance list
+os_images_hide: False

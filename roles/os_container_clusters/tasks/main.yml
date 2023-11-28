@@ -1,0 +1,49 @@
+---
+- name: Ensure magnum client is installed
+  ansible.builtin.pip:
+    name: python-magnumclient
+    state: present
+    virtualenv: "{{ os_container_clusters_venv or omit }}"
+  become: "{{ os_container_clusters_venv == None }}"
+
+- name: Check whether container cluster templates exist
+  ansible.builtin.shell: >
+    {{ os_container_clusters_venv ~ '/bin/' if os_container_clusters_venv else '' }}openstack
+    {% for auth_name, auth_value in os_container_clusters_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    {% if os_container_clusters_cacert is defined %}
+    --os-cacert {{ os_container_clusters_cacert }}
+    {% endif %}
+    --os-interface=public
+    coe cluster template show {{ item.name }} >/dev/null
+  with_items: "{{ os_container_clusters_templates }}"
+  register: cluster_template_show
+  changed_when: false
+  failed_when: false
+
+- name: Ensure container cluster templates exist
+  ansible.builtin.command: >
+    {{ os_container_clusters_venv ~ '/bin/' if os_container_clusters_venv else '' }}openstack
+    {% for auth_name, auth_value in os_container_clusters_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    {% if os_container_clusters_cacert is defined %}
+    --os-cacert {{ os_container_clusters_cacert }}
+    {% endif %}
+    --os-interface=public
+    coe cluster template create {{ item.item.name }}
+    {% for name, value in item.item.items() %}
+    {% if name not in ['name', 'labels'] %}
+    --{{ name | replace('_', '-') }}{% if value is not none %}='{{ value }}'{% endif %}
+    {% elif name == 'labels' %}
+    {% if value is mapping %}
+    --labels='{{ item.item['labels'].items() | map('join', '=') | join(',') }}'
+    {% else %}
+    --labels='{{ value }}'
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+  with_items: "{{ cluster_template_show.results }}"
+  when: item.rc != 0
+  changed_when: true

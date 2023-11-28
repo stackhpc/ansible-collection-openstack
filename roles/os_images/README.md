@@ -66,8 +66,11 @@ mutually exclusive where each contain:
   be built (even if an existing image that name has been built before). The images on glance
   will be replaced if `os_images_upload` is set to `True`. This defaults to
   `os_images_force_rebuild`if left unset.
-* `is_public`: (optional) whether the image should be set as visible to all
-  projects or kept private.
+* `is_public`: (optional) (deprecated - use `visibility`) whether the image should be set as visible to all
+  projects or kept private. Note that if both `is_public` and `visibility` are provided, `is_public` will 
+  be preferred.
+* `visibility`: (optional) Allowed values are 'public', 'private', 'shared'
+or 'community'. Default is 'public'
 * `owner`: (optional) ID of the project that should own the uploaded image.
 
 `os_images_common`: A set of elements to include in every image listed.
@@ -97,7 +100,9 @@ following parameters:
 will be replaced with the newly built image if `os_images_upload` is set to `True`. Defaults to
 `False`.
 
-`os_images_public`: Whether uploaded images are public. Defaults to `True` - note this requires admin permissions.
+`os_images_public`: (Deprecated - use `os_images_visibility`) Whether uploaded images are public. Defaults to `True` - note this requires admin permissions. 
+
+`os_images_visibility`: The visibility of images uploaded. Defaults to public/private, based off `os_images_public` - note this requires admin permissions.
 
 `os_images_venv`: Path to virtualenv in which to install python dependencies to upload images.
 

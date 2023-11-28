@@ -1,9 +1,8 @@
 ---
 - name: Include OS family-specific variables
-  include_vars: "{{ ansible_facts.os_family }}.yml"
-
+  ansible.builtin.include_vars: "{{ ansible_facts.os_family }}.yml"
 - name: Ensure required packages are installed
-  package:
+  ansible.builtin.package:
     name: "{{ (os_images_package_dependencies + os_images_package_dependencies_extra) | select | list }}"
     state: present
   become: true
@@ -12,7 +11,7 @@
 - name: Ensure diskimage-builder SELinux dependencies are installed
   vars:
     package_name: "{{ 'policycoreutils-python' if ansible_facts.distribution_major_version | int == 7 else 'python3-policycoreutils' }}"
-  package:
+  ansible.builtin.package:
     name: "{{ package_name }}"
     state: present
   when:
@@ -22,7 +21,7 @@
   become: true
 
 - name: Ensure download cache dir exists
-  file:
+  ansible.builtin.file:
     path: "{{ os_images_cache }}"
     owner: "{{ ansible_facts.user_uid }}"
     group: "{{ ansible_facts.user_gid }}"
@@ -30,7 +29,7 @@
   become: true
 
 - name: Remove old images for force rebuild
-  file:
+  ansible.builtin.file:
     path: "{{ os_images_cache }}/{{ item.name }}"
     state: absent
   when: item.force_rebuild | default(os_images_force_rebuild) | bool
@@ -40,7 +39,7 @@
   tags: clean
 
 - name: Generate per-image cache directories
-  file:
+  ansible.builtin.file:
     path: "{{ os_images_cache }}/{{ item.name }}"
     owner: "{{ ansible_facts.user_uid }}"
     group: "{{ ansible_facts.user_gid }}"
@@ -50,9 +49,14 @@
     label: "{{ item.name }}"
   become: true
 
-- block:
+- vars:
+    image_dest: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.{{ item.type | default('qcow2') }}{{ '.xz' if image_is_xz else '' }}"
+    image_is_xz: "{{ item.image_url.endswith('.xz') }}"
+  when: item.image_url is defined
+
+  block:
     - name: Download the image to the directory when an image_url is defined
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ item.image_url }}"
         dest: "{{ image_dest }}"
         checksum: "{{ item.checksum | default(omit) }}"
@@ -60,18 +64,13 @@
       loop_control:
         label: "{{ item.name }}"
     - name: Unpack the image if .xz format
-      command: unxz --keep --force {{ image_dest }}
+      ansible.builtin.command: unxz --keep --force {{ image_dest }}
       when: image_is_xz
       with_items: "{{ os_images_list | list }}"
       loop_control:
         label: "{{ item.name }}"
-  vars:
-    image_dest: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.{{ item.type | default('qcow2') }}{{ '.xz' if image_is_xz else '' }}"
-    image_is_xz: "{{ item.image_url.endswith('.xz') }}"
-  when: item.image_url is defined
-
 - name: Install a suitable version of diskimage-builder
-  pip:
+  ansible.builtin.pip:
     name: "{{ item.name }}"
     version: "{{ item.version or omit }}"
     state: "{{ os_images_package_state }}"
@@ -82,18 +81,18 @@
       version: "{{ os_images_dib_version }}"
 
 - name: Git clone any additional image element repos
-  git:
+  ansible.builtin.git:
     repo: "{{ item.repo }}"
     dest: "{{ item.local }}"
     version: "{{ item.version | default('HEAD') }}"
   with_items: "{{ os_images_git_elements }}"
 
 - name: Set a fact containing paths to DIB elements
-  set_fact:
+  ansible.builtin.set_fact:
     os_images_elements_path: "{{ os_images_elements }}"
 
 - name: Incorporate git-sourced DIB elements
-  set_fact:
+  ansible.builtin.set_fact:
     os_images_elements_path: >
       {{ os_images_elements_path +
          [item.local ~ '/' ~ item.elements_path] }}
@@ -101,20 +100,16 @@
   when: item.elements_path is defined
 
 - name: Set a fact containing the default DIB environment
-  set_fact:
+  ansible.builtin.set_fact:
     os_image_dib_env_default:
       ELEMENTS_PATH: "{{ os_images_elements_path | join(':') }}"
 
 - name: Generate diskimage-builder images
   vars:
     dib_args: >-
-      {% if item.size is defined %}--image-size {{ item.size }}{% endif %}
-      {% if item.type is defined %}-t {{ item.type }}{% endif %}
-      {% if item.packages | default %}-p {{ item.packages | join(',') }}{% endif %}
-      {{ os_images_common }}
-      {{ item.elements | join( ' ' ) }}
-      -o {{ item.name }}
-  shell: . {{ os_images_dib_venv }}/bin/activate && disk-image-create {{ dib_args }} > {{ item.name }}.stdout 2> {{ item.name }}.stderr
+      {% if item.size is defined %}--image-size {{ item.size }}{% endif %} {% if item.type is defined %}-t {{ item.type }}{% endif %} {% if item.packages | default
+      %}-p {{ item.packages | join(',') }}{% endif %} {{ os_images_common }} {{ item.elements | join(' ') }} -o {{ item.name }}
+  ansible.builtin.shell: . {{ os_images_dib_venv }}/bin/activate && disk-image-create {{ dib_args }} > {{ item.name }}.stdout 2> {{ item.name }}.stderr
   args:
     chdir: "{{ os_images_cache }}/{{ item.name }}"
     creates: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.d/dib-manifests"
@@ -129,7 +124,7 @@
   when: item.elements is defined
 
 - name: Fail if any images failed to build
-  fail:
+  ansible.builtin.fail:
     msg: >
       Image {{ item.0.name }} failed to build. See
       {{ item.0.name }}.stdout and {{ item.0.name }}.stderr in

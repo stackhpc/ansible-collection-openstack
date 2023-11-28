@@ -26,6 +26,7 @@
     owner: "{{ ansible_facts.user_uid }}"
     group: "{{ ansible_facts.user_gid }}"
     state: directory
+    mode: "0644"
   become: true
 
 - name: Remove old images for force rebuild
@@ -44,12 +45,14 @@
     owner: "{{ ansible_facts.user_uid }}"
     group: "{{ ansible_facts.user_gid }}"
     state: directory
+    mode: "0644"
   with_items: "{{ os_images_list | list }}"
   loop_control:
     label: "{{ item.name }}"
   become: true
 
-- vars:
+- name: Download and unpack
+  vars:
     image_dest: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.{{ item.type | default('qcow2') }}{{ '.xz' if image_is_xz else '' }}"
     image_is_xz: "{{ item.image_url.endswith('.xz') }}"
   when: item.image_url is defined
@@ -60,15 +63,18 @@
         url: "{{ item.image_url }}"
         dest: "{{ image_dest }}"
         checksum: "{{ item.checksum | default(omit) }}"
+        mode: "0644"
       with_items: "{{ os_images_list | list }}"
       loop_control:
         label: "{{ item.name }}"
     - name: Unpack the image if .xz format
       ansible.builtin.command: unxz --keep --force {{ image_dest }}
+      changed_when: true
       when: image_is_xz
       with_items: "{{ os_images_list | list }}"
       loop_control:
         label: "{{ item.name }}"
+
 - name: Install a suitable version of diskimage-builder
   ansible.builtin.pip:
     name: "{{ item.name }}"

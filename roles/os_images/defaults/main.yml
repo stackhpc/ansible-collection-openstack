@@ -21,7 +21,7 @@ os_images_upper_constraints_file: https://releases.openstack.org/constraints/upp
 os_images_dib_upper_constraints_file: ""
 
 # Path to a directory in which to cache build artefacts.
-os_images_cache: "{{ lookup('env','HOME') }}/disk_images"
+os_images_cache: "{{ lookup('env', 'HOME') }}/disk_images"
 
 # List of paths of site-specific diskimage-builder elements
 # os_images_elements: [ "{{ playbook_dir }}/stackhpc-image-elements" ]
@@ -58,11 +58,11 @@ os_images_auth_type: password
 
 # OpenStack authentication credentials:
 # For example, take OpenStack authentication credentials from the environment
-#os_images_auth:
-#  auth_url:     "{{ lookup('env','OS_AUTH_URL') }}"
-#  username:     "{{ lookup('env','OS_USERNAME') }}"
-#  password:     "{{ lookup('env','OS_PASSWORD') }}"
-#  project_name: "{{ lookup('env','OS_TENANT_NAME') }}"
+# os_images_auth:
+#   auth_url:     "{{ lookup('env','OS_AUTH_URL') }}"
+#   username:     "{{ lookup('env','OS_USERNAME') }}"
+#   password:     "{{ lookup('env','OS_PASSWORD') }}"
+#   project_name: "{{ lookup('env','OS_TENANT_NAME') }}"
 os_images_auth:
 # Endpoint URL type to fetch from the service catalog. Maybe be one of:
 # public, admin, or internal.

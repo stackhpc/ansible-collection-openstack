@@ -1,16 +1,15 @@
 ---
 galaxy_info:
-  #role_name: os_images
   author: Stig Telfer
   description: >
     Role to generate guest instance images and upload to OpenStack
   company: StackHPC Ltd
   license: Apache2
-  min_ansible_version: 2.0
+  min_ansible_version: "2.0"
   platforms:
     - name: EL
       versions:
-        - 7
+        - "7"
     - name: Ubuntu
       versions:
         - all

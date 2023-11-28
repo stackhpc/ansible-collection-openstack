@@ -6,7 +6,7 @@
   package:
     name: "{{ (os_images_package_dependencies + os_images_package_dependencies_extra) | select | list }}"
     state: present
-  become: True
+  become: true
 
 # The rpm-distro element executes 'semanage' during its cleanup phase.
 - name: Ensure diskimage-builder SELinux dependencies are installed
@@ -17,9 +17,9 @@
     state: present
   when:
     - ansible_facts.selinux
-    - "ansible_facts.selinux.status != 'disabled'"
+    - ansible_facts.selinux.status != 'disabled'
     - ansible_facts.os_family == "RedHat"
-  become: True
+  become: true
 
 - name: Ensure download cache dir exists
   file:
@@ -27,7 +27,7 @@
     owner: "{{ ansible_facts.user_uid }}"
     group: "{{ ansible_facts.user_gid }}"
     state: directory
-  become: True
+  become: true
 
 - name: Remove old images for force rebuild
   file:
@@ -48,7 +48,7 @@
   with_items: "{{ os_images_list | list }}"
   loop_control:
     label: "{{ item.name }}"
-  become: True
+  become: true
 
 - block:
     - name: Download the image to the directory when an image_url is defined
@@ -114,7 +114,7 @@
       {{ os_images_common }}
       {{ item.elements | join( ' ' ) }}
       -o {{ item.name }}
-  shell: ". {{ os_images_dib_venv }}/bin/activate && disk-image-create {{ dib_args }} > {{ item.name }}.stdout 2> {{ item.name }}.stderr"
+  shell: . {{ os_images_dib_venv }}/bin/activate && disk-image-create {{ dib_args }} > {{ item.name }}.stdout 2> {{ item.name }}.stderr
   args:
     chdir: "{{ os_images_cache }}/{{ item.name }}"
     creates: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.d/dib-manifests"

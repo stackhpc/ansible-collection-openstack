@@ -24,9 +24,9 @@
   ansible.builtin.assert:
     that:
       - promotion_name in retire_or_promote.openstack_images | map(attribute='name') | list
-    fail_msg: The image {{ item.name[:-(os_images_name_suffix | length | int)] }} does not exist.
+    fail_msg: "The image {{ item.name[: -(os_images_name_suffix | length | int)] }} does not exist."
   vars:
-    promotion_name: "{{ item.name[:-(os_images_name_suffix | length | int)] }}"
+    promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] }}"
   loop: "{{ os_images_list | list }}"
   when: item.rename_image | default(os_images_promote) | bool
 
@@ -39,19 +39,20 @@
   when: item.rename_image | default(os_images_promote) | bool
 
 - name: Check if image suffix is provided
-  set_fact:
-    image_suffix_provided: "{{ os_images_name_suffix is defined and os_images_name_suffix is not none and (os_images_name_suffix | length > 0) | bool }}"
+  ansible.builtin.set_fact:
+    image_suffix_provided: "{{ os_images_name_suffix is defined and os_images_name_suffix is not none and (os_images_name_suffix | length > 0) }}"
 
-- debug:
+- name: Display info
+  ansible.builtin.debug:
     msg: |
       Warning: no image suffix is provided so retired images are not renamed and candidate images are not promoted.
       Images with the `hide_image` attribute will still be hidden.
-  when: image_suffix_provided == false
+  when: not (image_suffix_provided | bool)
 
 - name: Hide retire candidate images
   ansible.builtin.command: "{{ os_images_venv }}/bin/openstack image set --hidden {{ promotion_name }}"
   vars:
-    promotion_name: "{{ item.name[:-(os_images_name_suffix | length | int)] if image_suffix_provided else item.name }}"
+    promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] if image_suffix_provided else item.name }}"
   with_items: "{{ os_images_list | list }}"
   changed_when: true
   when: (item.hide_image | default(os_images_hide) | bool)
@@ -63,7 +64,7 @@
     promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] }}"
   loop: "{{ os_images_list | list }}"
   changed_when: true
-  when: "image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)"
+  when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
   environment: "{{ os_images_venv }}"
 
 - name: Ensure new images are promoted
@@ -72,25 +73,25 @@
     promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] }}"
   loop: "{{ os_images_list | list }}"
   changed_when: true
-  when: "image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)"
+  when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
   environment: "{{ os_images_venv }}"
 
-  - name: Discover renamed images
-  set_fact:
+- name: Discover renamed images
+  ansible.builtin.set_fact:
     renaming_message: |
       The following images have been retired:
       {% for item in images %}
-      {{ item.name[:-(os_images_name_suffix | length | int)] }} > {{ item.name[:-(os_images_name_suffix | length | int)] }}.{{ ansible_date_time.date }}
+      {{ item.name[: -(os_images_name_suffix | length | int)] }} > {{ item.name[: -(os_images_name_suffix | length | int)] }}.{{ ansible_date_time.date }}
       {% endfor %}
-      The following images have been promoted: 
+      The following images have been promoted:
       {% for item in images %}
-      {{ item.name }} > {{ item.name[:-(os_images_name_suffix | length | int)] }}
+      {{ item.name }} > {{ item.name[: -(os_images_name_suffix | length | int)] }}
       {% endfor %}
   vars:
     images: "{{ os_images_list | list }}"
   when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
 
-- debug:
+- name: Display info
+  ansible.builtin.debug:
     var: renaming_message
   when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
-  

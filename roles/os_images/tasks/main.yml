@@ -1,7 +1,7 @@
 ---
 - name: Set a fact about the Ansible python interpreter
   ansible.builtin.set_fact:
-    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python' + ansible_facts.python.version.major | string) }}"
+    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python3') }}"
 
 - name: Build or download images
   ansible.builtin.import_tasks: images.yml

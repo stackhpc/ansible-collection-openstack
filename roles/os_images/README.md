@@ -2,7 +2,7 @@ OpenStack Images
 ================
 
 This role generates guest instance images using disk-image-builder
-and uploads them to OpenStack using the `os_image` module.
+and uploads them to OpenStack using the `openstack.cloud.image` module.
 
 Requirements
 ------------
@@ -126,9 +126,9 @@ The following playbook generates a guest image and uploads it to OpenStack:
 
     ---
     - name: Generate guest image and upload
-      hosts: openstack
+      hosts: localhost
       roles:
-        - role: stackhpc.os-images
+        - role: stackhpc.openstack.os_images
           os_images_auth:
             auth_url:     "{{ lookup('env','OS_AUTH_URL') }}"
             username:     "{{ lookup('env','OS_USERNAME') }}"

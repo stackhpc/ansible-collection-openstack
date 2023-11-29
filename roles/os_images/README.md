@@ -102,7 +102,7 @@ will be replaced with the newly built image if `os_images_upload` is set to `Tru
 
 `os_images_public`: (Deprecated - use `os_images_visibility`) Whether uploaded images are public. Defaults to `True` - note this requires admin permissions. 
 
-`os_images_visibility`: The visibility of images uploaded. Defaults to public/private, based off `os_images_public` - note this requires admin permissions.
+`os_images_visibility`: The visibility of images uploaded. One of `community`,`public` or `private. If unset, defaults to `os_images_public` (requires admin permissions for anything other than `private`)
 
 `os_images_venv`: Path to virtualenv in which to install python dependencies to upload images.
 

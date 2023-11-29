@@ -23,7 +23,7 @@
 - name: Ensure images for retirement exist
   ansible.builtin.assert:
     that:
-      - promotion_name in retire_or_promote.openstack_images | map(attribute='name') | list
+      - promotion_name in retire_or_promote_list.openstack_images | map(attribute='name') | list
     fail_msg: "The image {{ item.name[: -(os_images_name_suffix | length | int)] }} does not exist."
   vars:
     promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] }}"

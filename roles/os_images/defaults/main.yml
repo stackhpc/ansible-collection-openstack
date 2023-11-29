@@ -12,8 +12,8 @@ os_images_package_state: present
 # Upper constraints file for installation of python dependencies to upload
 # images.
 #
-# Use Yoga upper constraints to avoid incompatibility with openstacksdk 0.99.0.
-os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/yoga
+# Use Antelope upper constraints as openstacksdk 1.0.1 and openstackclient 6.2.0 are required
+os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
 
 # Upper constraints file for installation of DIB to build images.
 os_images_dib_upper_constraints_file: ""

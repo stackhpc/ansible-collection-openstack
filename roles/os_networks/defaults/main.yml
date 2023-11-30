@@ -101,6 +101,5 @@ os_networks_security_groups: []
 #   in the designated way.
 os_networks_rbac: []
 
-# Use Yoga upper constraints otherwise, to allow compatibility with python 3.10
-# https://storyboard.openstack.org/#!/story/2008577
-os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/yoga
+# Upper constraints file for installation of Python dependencies.
+os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1

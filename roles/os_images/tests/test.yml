@@ -1,0 +1,6 @@
+---
+- name: Os_images
+  hosts: all
+  connection: local
+  roles:
+    - stackhpc.openstack.os_images

@@ -77,7 +77,7 @@ resources.
       roles:
         - role: stackhpc.openstack.os_projects
           os_projects_venv: "~/os-projects-venv"
-          os_projects_upper_constraints: "https://opendev.org/openstack/requirements/raw/branch/stable/2023.1/upper-constraints.txt"
+          os_projects_upper_constraints: "https://releases.openstack.org/constraints/upper/2023.1"
           os_projects_auth_type: "password"
           os_projects_auth:
             project_name: <keystone project>

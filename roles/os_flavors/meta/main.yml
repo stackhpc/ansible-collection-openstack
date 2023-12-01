@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: stackhpc.openstack.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_flavors_venv }}"

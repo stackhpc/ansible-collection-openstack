@@ -1,0 +1,41 @@
+---
+# Path to a directory in which to create a virtualenv.
+os_projects_venv:
+# Authentication type as used by os_* modules' 'auth_type' argument.
+os_projects_auth_type:
+# Authentication options for admin as used by os_* modules' 'auth' argument.
+os_projects_admin_auth: {}
+# Endpoint URL type to fetch from the service catalog. Maybe be one of:
+# public, admin, or internal.
+os_projects_interface:
+# Environment variables for use with os_* modules.
+os_projects_environment:
+  OS_IDENTITY_API_VERSION: 3
+
+# List of OpenStack domains to create.
+# Each item should be a dict containing the following items:
+# - 'name': The name of the domain.
+# - 'description': Optional description for the domain.
+os_projects_domains: []
+# List of OpenStack projects to create.
+# Each item should be a dict containing the following items:
+# - 'name': The name of the project.
+# - 'description': A description of the project.
+# - 'project_domain': The domain in which to register the project.
+# - 'user_domain': The domain in which to register users.
+# - 'users': Optional list of users to register. Each user should be a dict
+#   containing the following items:
+#   - 'name': The name of the user.
+#   - 'password': The user's password.
+#   - 'roles': Optional list of roles to assign to the user in the project.
+#   - 'domain_roles': Optional list of roles to assign to the user in the user
+#     domain.
+#   - 'openrc_file': Optional path to an environment file to create.
+# - 'keypairs': Optional list of SSH key pairs to register with Nova. Each key
+#   pair should be a dict containing the following items:
+#   - 'name': The name of the keypair.
+#   - 'public_key': The SSH public key contents. Optional.
+#   - 'public_key_file': Path to the SSH public key on the control host.
+# 'quotas': Optional dict mapping quota names to their values.
+os_projects: [] # noqa var-naming[no-role-prefix]
+os_projects_upper_constraints:

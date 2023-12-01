@@ -1,0 +1,71 @@
+---
+- name: Ensure project users exist
+  openstack.cloud.identity_user:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    email: "{{ item.email | default(omit) }}"
+    password: "{{ item.password }}"
+    default_project: "{{ project.name }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    state: present
+    enabled: true
+    wait: true
+  with_items: "{{ project.users }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.name }}"
+
+- name: Ensure users have required project roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ item.0.name }}"
+    project: "{{ project.name }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  loop_control:
+    label:
+      project: "{{ project.name }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"
+
+- name: Ensure users have required domain roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ item.0.name }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.users }}"
+    - domain_roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label:
+      domain: "{{ project.user_domain }}"
+      user: "{{ item.0.name }}"
+      role: "{{ item.1 }}"

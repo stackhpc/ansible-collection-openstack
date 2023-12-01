@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: stackhpc.openstack.os_openstacksdk
+    os_openstacksdk_venv: "{{ os_networks_venv }}"
+    os_openstacksdk_upper_constraints_file: "{{ os_networks_upper_constraints_file | default(None) }}"

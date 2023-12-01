@@ -1,0 +1,62 @@
+---
+- name: Query volume types in cinder
+  ansible.builtin.shell: >-
+    source {{ os_volumes_venv }}/bin/activate &&
+    openstack
+    {% for auth_name, auth_value in os_volumes_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    --os-interface=public
+    volume type show {{ item.name }}
+  with_items: "{{ os_volumes_types }}"
+  changed_when: false
+  failed_when: false
+  environment:
+    OS_IDENTITY_API_VERSION: "3"
+  register: os_volumes_types_result
+  loop_control:
+    label: "{{ item.name }}"
+
+# NOTE: Currently updating volume types is not supported.
+- name: Ensure volume type is registered with cinder
+  ansible.builtin.shell: >-
+    source {{ os_volumes_venv }}/bin/activate &&
+    openstack
+    {% for auth_name, auth_value in os_volumes_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    --os-interface=public
+    volume type create
+    {{ volume_type.name }}
+    {% if 'description' in volume_type %} --description '{{ volume_type.description }}'{% endif %}
+    {% if volume_type.get('public', True) %} --public{% else %} --private{% endif %}
+    {% for key, value in volume_type.get('extra_specs', {}).items() %} --property {{ key }}='{{ value }}'{% endfor %}
+  with_items: "{{ os_volumes_types_result.results }}"
+  changed_when: true
+  when: item.rc != 0
+  environment:
+    OS_IDENTITY_API_VERSION: "3"
+  vars:
+    volume_type: "{{ item.item }}"
+  loop_control:
+    label: "{{ volume_type.name }}"
+
+# FIXME: Ansible's os_volume module cannot specify the project for a volume.
+- name: Ensure volume is registered with cinder
+  openstack.cloud.volume:
+    auth_type: "{{ os_volumes_auth_type }}"
+    auth: "{{ os_volumes_auth }}"
+    display_name: "{{ item.display_name }}"
+    display_description: "{{ item.display_description | default(omit) }}"
+    image: "{{ item.image | default(omit) }}"
+    scheduler_hints: "{{ item.scheduler_hints | default(omit) }}"
+    size: "{{ item.size | default(omit) }}"
+    snapshot_id: "{{ item.snapshot_id | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+    volume: "{{ item.volume | default(omit) }}"
+    volume_type: "{{ item.volume_type | default(omit) }}"
+  with_items: "{{ os_volumes }}"
+  environment:
+    OS_IDENTITY_API_VERSION: "3"
+  loop_control:
+    label: "{{ item.display_name }}"

@@ -1,0 +1,61 @@
+---
+- name: Ensure magnum client is installed
+  ansible.builtin.pip:
+    name: python-magnumclient
+    state: present
+    virtualenv: "{{ os_container_clusters_venv or omit }}"
+  become: "{{ os_container_clusters_venv == None }}"
+
+- name: Set a fact about the Ansible python interpreter
+  ansible.builtin.set_fact:
+    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python3') }}"
+
+- name: Ensure container cluster templates exist
+  vars:
+    ansible_python_interpreter: "{{ os_container_clusters_venv ~ '/bin/python' if os_container_clusters_venv != None else old_ansible_python_interpreter }}"
+  openstack.cloud.coe_cluster_template:
+    auth: "{{ os_container_clusters_auth }}"
+    auth_type: "{{ os_container_clusters_auth_type }}"
+    cacert: "{{ os_container_clusters_cacert | default(omit) }}"
+    interface: "{{ os_container_clusters_interface | default(omit, true) }}"
+    labels: "{{ item.labels | default(omit) }}"
+    external_network_id: "{{ item.external_network_id | default(undef(hint='You must provide an external network')) }}"
+    master_flavor_id: "{{ item.master_flavor | default(undef(hint='You must provide a master flavor')) }}"
+    flavor_id: "{{ item.flavor | default(undef(hint='You must provide a flavor')) }}"
+    image_id: "{{ item.image | default(undef(hint='You must provide an image')) }}"
+    name: "{{ item.name | default(undef(hint='You must provide a name')) }}"
+    coe: "{{ item.coe | default(undef(hint='You must provide a coe')) }}"
+    network_driver: "{{ item.network_driver | default(omit) }}"
+    master_lb_enabled: "{{ item.master_lb_enabled | default(True) | bool }}"
+    floating_ip_enabled: "{{ item.floating_ip_enabled | default(True) | bool }}"
+    dns_nameserver: "{{ item.dns_nameserver | default(omit) }}"
+    public: "{{ item.public | default(os_container_clusters_public) | bool }}"
+    docker_volume_size: "{{ item.docker_volume_size | default(omit) }}"
+    fixed_network: "{{ item.fixed_network | default(omit) }}"
+    fixed_subnet: "{{ item.fixed_subnet | default(omit) }}"
+    registry_enabled: "{{ item.registry_enabled | default(omit) }}"
+    tls_disabled: "{{ item.tls_disabled | default(omit) }}"
+    keypair_id: "{{ item.keypair_id | default(omit) }}"
+    volume_driver: "{{ item.volume_driver | default(omit) }}"
+    http_proxy: "{{ item.http_proxy | default(omit) }}"
+    https_proxy: "{{ item.https_proxy | default(omit) }}"
+    no_proxy: "{{ item.no_proxy | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  with_items: "{{ os_container_clusters_templates }}"
+
+# NOTE: The coe_cluster_template module does not currently support setting the
+# hidden parameter.
+- name: Hide cluster templates if specified
+  ansible.builtin.command: >
+    {{ os_container_clusters_venv ~ '/bin/' if os_container_clusters_venv else '' }}openstack
+    {% for auth_name, auth_value in os_container_clusters_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    {% if os_container_clusters_cacert is defined %}
+    --os-cacert {{ os_container_clusters_cacert }}
+    {% endif %}
+    --os-interface=public
+    coe cluster template update {{ item.name }} replace hidden=True
+  with_items: "{{ os_container_clusters_templates }}"
+  when: item.is_hidden | default(os_container_clusters_templates_hide) | bool
+  changed_when: true

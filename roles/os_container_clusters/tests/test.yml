@@ -1,0 +1,6 @@
+---
+- name: Test os_container_clusters role
+  hosts: all
+  connection: local
+  roles:
+    - stackhpc.openstack.os_container_clusters

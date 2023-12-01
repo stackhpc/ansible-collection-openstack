@@ -41,6 +41,9 @@ dict containing the following items:
 - `extra_specs`: Optional dict of additional specifications for the volume
   type.
 
+`os_volumes_upper_constraints_file` is a file or URL containing Python upper
+constraints.
+
 Dependencies
 ------------
 

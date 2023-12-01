@@ -1,12 +1,9 @@
 ---
 # Path to a directory in which to create a virtualenv.
 os_deploy_templates_venv:
-# Upper constraints file for installation of python dependencies.
-#
-# Use Yoga upper constraints, to avoid incompatibility with openstacksdk
-# 0.99.0 and include support for deploy templates (included since openstacksdk
-# 0.53).
-os_deploy_templates_upper_constraints_file: https://releases.openstack.org/constraints/upper/yoga
+
+# Upper constraints file for installation of Python dependencies.
+os_deploy_templates_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
 
 # Authentication type.
 os_deploy_templates_auth_type:

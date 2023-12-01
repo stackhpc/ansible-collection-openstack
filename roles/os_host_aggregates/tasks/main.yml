@@ -1,0 +1,9 @@
+---
+- name: Set a fact about the Ansible python interpreter
+  ansible.builtin.set_fact:
+    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python3') }}"
+
+- name: Import host-aggregates.yml
+  ansible.builtin.import_tasks: host-aggregates.yml
+  vars:
+    ansible_python_interpreter: "{{ os_host_aggregates_venv ~ '/bin/python' if os_host_aggregates_venv != None else old_ansible_python_interpreter }}"

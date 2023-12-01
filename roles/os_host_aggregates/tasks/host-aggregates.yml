@@ -1,0 +1,13 @@
+---
+- name: Ensure nova host aggregates exist
+  openstack.cloud.host_aggregate:
+    auth_type: "{{ os_host_aggregates_auth_type }}"
+    auth: "{{ os_host_aggregates_auth }}"
+    cacert: "{{ os_host_aggregates_cacert | default(omit) }}"
+    interface: "{{ os_host_aggregates_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    availability_zone: "{{ item.availability_zone | default(omit) }}"
+    hosts: "{{ item.hosts | default(omit) }}"
+    metadata: "{{ item.metadata | default(omit) }}"
+    state: present
+  with_items: "{{ os_host_aggregates }}"

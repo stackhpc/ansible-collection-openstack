@@ -1,0 +1,6 @@
+---
+- name: Test os_flavors role
+  hosts: all
+  connection: local
+  roles:
+    - stackhpc.openstack.os_flavors

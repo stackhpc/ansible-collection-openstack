@@ -3,6 +3,7 @@ exclude_paths:
   - .cache/
   - .github/
 skip_list:
+  - galaxy[version-incorrect]
   - meta-no-info
   - meta-runtime[unsupported-version]
   - yaml[line-length]

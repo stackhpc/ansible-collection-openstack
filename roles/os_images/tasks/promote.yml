@@ -15,6 +15,7 @@
   when: >
     (os_images_list | selectattr('rename_image', 'defined') | list | length > 0)
     or (os_images_promote | bool)
+    or (os_images_retire | bool)
 
 - name: Ensure images for retirement exist
   ansible.builtin.assert:
@@ -24,7 +25,7 @@
   vars:
     promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] }}"
   loop: "{{ os_images_list | list }}"
-  when: item.rename_image | default(os_images_promote) | bool
+  when: item.rename_image | default(os_images_retire) | bool
 
 - name: Ensure images for promotion exist
   ansible.builtin.assert:
@@ -60,7 +61,7 @@
     promotion_name: "{{ item.name[: -(os_images_name_suffix | length | int)] }}"
   loop: "{{ os_images_list | list }}"
   changed_when: true
-  when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
+  when: image_suffix_provided and (item.rename_image | default(os_images_retire) | bool)
   environment: "{{ os_images_venv }}"
 
 - name: Ensure new images are promoted
@@ -72,9 +73,9 @@
   when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
   environment: "{{ os_images_venv }}"
 
-- name: Discover renamed images
+- name: Discover retired images
   ansible.builtin.set_fact:
-    renaming_message: |
+    retire_message: |
       The following images have been retired:
       {% for item in images %}
       {{ item.name[: -(os_images_name_suffix | length | int)] }} > {{ item.name[: -(os_images_name_suffix | length | int)] }}.{{ ansible_date_time.date }}
@@ -85,9 +86,25 @@
       {% endfor %}
   vars:
     images: "{{ os_images_list | list }}"
+  when: image_suffix_provided and (item.rename_image | default(os_images_retire) | bool)
+
+- name: Display info
+  ansible.builtin.debug:
+    var: retire_message
+  when: image_suffix_provided and (item.rename_image | default(os_images_retire) | bool)
+
+- name: Discover promoted images
+  ansible.builtin.set_fact:
+    promote_message: |
+      The following images have been promoted:
+      {% for item in images %}
+      {{ item.name }} > {{ item.name[: -(os_images_name_suffix | length | int)] }}
+      {% endfor %}
+  vars:
+    images: "{{ os_images_list | list }}"
   when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)
 
 - name: Display info
   ansible.builtin.debug:
-    var: renaming_message
+    var: promote_message
   when: image_suffix_provided and (item.rename_image | default(os_images_promote) | bool)

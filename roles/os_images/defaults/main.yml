@@ -82,14 +82,18 @@ os_images_force_rebuild: false
 # Whether images should be public (requires admin rights)
 os_images_public: true
 
-# Whether or not should old images be retired and new images be promoted
+# Whether or not should new images be promoted
 os_images_promote: false
+
+# Whether or not should old images be retired 
+os_images_retire: "{{ os_images_promote }}"
 
 # Whether or not to build the images
 os_images_build: true
 
 # Image suffix which would be removed during image promotion for exmple: -rc, -dev, -test
 os_images_name_suffix:
+
 # Whether or not to hide the images in Glance list
 os_images_hide: false
 

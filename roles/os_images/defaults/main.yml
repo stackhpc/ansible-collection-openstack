@@ -85,7 +85,7 @@ os_images_public: true
 # Whether or not should new images be promoted
 os_images_promote: false
 
-# Whether or not should old images be retired 
+# Whether or not should old images be retired
 os_images_retire: "{{ os_images_promote }}"
 
 # Whether or not to build the images

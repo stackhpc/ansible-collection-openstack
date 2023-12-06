@@ -20,4 +20,5 @@
   when: >
     ((os_images_list | selectattr('rename_image', 'defined')) + (os_images_list | selectattr('hide_image', 'defined'))) | list | length > 0
     or (os_images_promote | bool)
+    or (os_images_retire | bool)
     or (os_images_hide | bool)

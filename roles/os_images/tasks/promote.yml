@@ -80,10 +80,6 @@
       {% for item in images %}
       {{ item.name[: -(os_images_name_suffix | length | int)] }} > {{ item.name[: -(os_images_name_suffix | length | int)] }}.{{ ansible_date_time.date }}
       {% endfor %}
-      The following images have been promoted:
-      {% for item in images %}
-      {{ item.name }} > {{ item.name[: -(os_images_name_suffix | length | int)] }}
-      {% endfor %}
   vars:
     images: "{{ os_images_list | list }}"
   when: image_suffix_provided and (item.rename_image | default(os_images_retire) | bool)

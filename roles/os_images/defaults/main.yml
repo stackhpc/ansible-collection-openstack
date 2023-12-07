@@ -9,9 +9,6 @@ os_images_dib_venv: "{{ os_images_venv }}"
 # State of python dependencies.
 os_images_package_state: present
 
-# Upper constraints file for installation of python dependencies to upload
-# images.
-#
 # Use Antelope upper constraints as openstacksdk 1.0.1 and openstackclient 6.2.0 are required
 os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
 
@@ -85,13 +82,20 @@ os_images_force_rebuild: false
 # Whether images should be public (requires admin rights)
 os_images_public: true
 
-# Whether or not should old images be retired and new images be promoted
+# Whether or not should new images be promoted
 os_images_promote: false
+
+# Whether or not should old images be retired
+os_images_retire: "{{ os_images_promote }}"
 
 # Whether or not to build the images
 os_images_build: true
 
 # Image suffix which would be removed during image promotion for exmple: -rc, -dev, -test
 os_images_name_suffix:
+
 # Whether or not to hide the images in Glance list
 os_images_hide: false
+
+# Visibility of images ('public' requires admin rights.)
+os_images_visibility: "{{ 'public' if os_images_public | bool else 'private' }}"

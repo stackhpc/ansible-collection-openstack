@@ -10,7 +10,7 @@
 # The rpm-distro element executes 'semanage' during its cleanup phase.
 - name: Ensure diskimage-builder SELinux dependencies are installed
   vars:
-    package_name: "python3-policycoreutils"
+    package_name: python3-policycoreutils
   ansible.builtin.package:
     name: "{{ package_name }}"
     state: present

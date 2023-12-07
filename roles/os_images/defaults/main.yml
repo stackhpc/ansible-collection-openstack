@@ -98,4 +98,4 @@ os_images_name_suffix:
 os_images_hide: false
 
 # Visibility of images ('public' requires admin rights.)
-os_images_visibility: "{{ 'public' if os_images_public else 'private' }}"
+os_images_visibility: "{{ 'public' if os_images_public | bool else 'private' }}"

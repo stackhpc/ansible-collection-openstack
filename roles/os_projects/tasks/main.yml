@@ -51,6 +51,7 @@
   changed_when: false
   environment: "{{ os_projects_environment }}"
   register: domain_list
+  check_mode: false
 
 - name: Initialise a fact mapping domain names to IDs
   ansible.builtin.set_fact:

@@ -80,13 +80,13 @@
 
 # Workaround bug https://bugs.launchpad.net/ansible-collections-openstack/+bug/2049658
 # by looking up external network information using networks_info and then explicitly
-# passing the network ID into the openstack.cloud.router. Remove this workaround and 
+# passing the network ID into the openstack.cloud.router. Remove this workaround and
 # uncomment code above when bug is fixed.
 
 - name: Ensure router is registered with neutron
   # Can't loop over blocks in Ansible so have to
   # include separate tasks file instead :(
-  include_tasks: router_workaround.yml
+  ansible.builtin.include_tasks: router_workaround.yml
   with_items: "{{ os_networks_routers }}"
   when: item.state | default('present') == 'present'
 

@@ -3,7 +3,7 @@
 # passing the network ID into the openstack.cloud.router's network field.
 
 # NOTE: When the item.network parameter is an ID then we are effectively querying a
-# network by ID just to extract it's ID... but since the 'name' field of 
+# network by ID just to extract it's ID... but since the 'name' field of
 # openstack.cloud.networks_info makes no distinction between names and IDs we can't
 # really avoid this.
 

@@ -1,0 +1,27 @@
+# Workaround bug https://bugs.launchpad.net/ansible-collections-openstack/+bug/2049658
+# by looking up external network information using networks_info and then explicitly
+# passing the network ID into the openstack.cloud.router's network field.
+
+# NOTE: When the item.network parameter is an ID then we are effectively querying a
+# network by ID just to extract it's ID... but since the 'name' field of 
+# openstack.cloud.networks_info makes no distinction between names and IDs we can't
+# really avoid this.
+
+- name: Fetch external network information
+  openstack.cloud.networks_info:
+    name: "{{ item.network }}"
+  register: _networks_query
+
+- name: Ensure router is registered with neutron
+  openstack.cloud.router:
+    auth_type: "{{ os_networks_auth_type }}"
+    auth: "{{ os_networks_auth }}"
+    cacert: "{{ os_networks_cacert | default(omit) }}"
+    cloud: "{{ os_networks_cloud | default(omit) }}"
+    interface: "{{ os_networks_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    interfaces: "{{ item.interfaces | default(omit) }}"
+    network: "{{ _networks_query.networks[0].id }}"
+    external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
+    project: "{{ item.project | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"

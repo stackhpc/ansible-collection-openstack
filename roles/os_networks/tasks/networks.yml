@@ -62,19 +62,31 @@
     - "{{ os_networks }}"
     - subnets
 
+# - name: Ensure router is registered with neutron
+#   openstack.cloud.router:
+#     auth_type: "{{ os_networks_auth_type }}"
+#     auth: "{{ os_networks_auth }}"
+#     cacert: "{{ os_networks_cacert | default(omit) }}"
+#     cloud: "{{ os_networks_cloud | default(omit) }}"
+#     interface: "{{ os_networks_interface | default(omit, true) }}"
+#     name: "{{ item.name }}"
+#     interfaces: "{{ item.interfaces | default(omit) }}"
+#     network: "{{ item.network }}"
+#     external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
+#     project: "{{ item.project | default(omit) }}"
+#     state: "{{ item.state | default(omit) }}"
+#   loop: "{{ os_networks_routers }}"
+#   when: item.state | default('present') == 'present'
+
+# Workaround bug https://bugs.launchpad.net/ansible-collections-openstack/+bug/2049658
+# by looking up external network information using networks_info and then explicitly
+# passing the network ID into the openstack.cloud.router. Remove this workaround and
+# uncomment code above when bug is fixed.
+
 - name: Ensure router is registered with neutron
-  openstack.cloud.router:
-    auth_type: "{{ os_networks_auth_type }}"
-    auth: "{{ os_networks_auth }}"
-    cacert: "{{ os_networks_cacert | default(omit) }}"
-    cloud: "{{ os_networks_cloud | default(omit) }}"
-    interface: "{{ os_networks_interface | default(omit, true) }}"
-    name: "{{ item.name }}"
-    interfaces: "{{ item.interfaces | default(omit) }}"
-    network: "{{ item.network | default(omit) }}"
-    external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
-    project: "{{ item.project | default(omit) }}"
-    state: "{{ item.state | default(omit) }}"
+  # Can't loop over blocks in Ansible so have to
+  # include separate tasks file instead :(
+  ansible.builtin.include_tasks: router_workaround.yml
   with_items: "{{ os_networks_routers }}"
   when: item.state | default('present') == 'present'
 

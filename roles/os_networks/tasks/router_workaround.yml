@@ -10,6 +10,11 @@
 - name: Fetch external network information
   openstack.cloud.networks_info:
     name: "{{ item.network }}"
+    auth_type: "{{ os_networks_auth_type }}"
+    auth: "{{ os_networks_auth }}"
+    cacert: "{{ os_networks_cacert | default(omit) }}"
+    cloud: "{{ os_networks_cloud | default(omit) }}"
+    interface: "{{ os_networks_interface | default(omit, true) }}"
   register: _networks_query
 
 - name: Ensure router is registered with neutron

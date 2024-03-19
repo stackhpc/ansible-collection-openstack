@@ -1,0 +1,239 @@
+---
+- name: Ensure the domain exists
+  openstack.cloud.identity_domain:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    state: present
+    enabled: true
+    wait: true
+  with_items: "{{ os_projects_domains }}"
+  environment: "{{ os_projects_environment }}"
+
+# Domains must be specified by UUID in API calls (with the exception of the
+# default domain), so build a domain name -> UUID map that allows users to pass
+# in domains by name. We might have the information already, but in case any
+# domains weren't created by the previous task, let's just grab the whole lot.
+
+# NOTE: We can't use the os_keystone_domain_facts module because ansible
+# sanitises variables matching anything found in the auth parameter of os_*
+# modules. This will include the name of the domain used to authenticate
+# against. Use the openstack CLI directly instead.
+
+- name: List OpenStack domains
+  ansible.builtin.shell: >
+    . {{ os_projects_venv }}/bin/activate &&
+    openstack
+    {% for auth_name, auth_value in os_projects_admin_auth.items() %}
+    --os-{{ auth_name | replace('_', '-') }}='{{ auth_value }}'
+    {% endfor %}
+    {% if os_projects_cacert is defined %}
+    --os-cacert='{{ os_projects_cacert }}'
+    {% endif %}
+    {% if os_projects_cloud is defined %}
+    --os-cloud='{{ os_projects_cloud }}'
+    {% endif %}
+    --os-interface={{ os_projects_interface | default('public', true) }}
+    domain list -f json -c Name -c ID
+  changed_when: false
+  environment: "{{ os_projects_environment }}"
+  register: domain_list
+  check_mode: false
+
+- name: Initialise a fact mapping domain names to IDs
+  ansible.builtin.set_fact:
+    os_projects_domain_to_id: {}
+
+- name: Update a fact mapping domain names to IDs
+  ansible.builtin.set_fact:
+    os_projects_domain_to_id: >
+      {{ os_projects_domain_to_id | combine({item.Name: item.ID}) }}
+  with_items: "{{ domain_list.stdout | from_json }}"
+  loop_control:
+    label: "{{ item.Name }}"
+
+- name: Fail if the project's domain was not found
+  ansible.builtin.fail:
+    msg: >
+      OpenStack domain {{ item.project_domain }} for project {{ item.name }}
+      was not found.
+  when:
+    - item.project_domain not in os_projects_domain_to_id
+    - item.project_domain not in os_projects_domain_to_id.values()
+  with_items: "{{ os_projects }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Fail if the project's user domain was not found
+  ansible.builtin.fail:
+    msg: >
+      OpenStack domain {{ item.user_domain }} for project {{ item.name }}
+      was not found.
+  when:
+    - item.user_domain is defined
+    - item.user_domain not in os_projects_domain_to_id
+    - item.user_domain not in os_projects_domain_to_id.values()
+  with_items: "{{ os_projects }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Ensure the project exists
+  openstack.cloud.project:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    domain_id: "{{ domain_is_id | ternary(item.project_domain, os_projects_domain_to_id[item.project_domain]) }}"
+    state: present
+    enabled: true
+    wait: true
+  with_items: "{{ os_projects }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ item.project_domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Ensure the role exists
+  openstack.cloud.identity_role:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item }}"
+  with_items: "{{ all_roles }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    users: >
+      {{ os_projects |
+         selectattr('users', 'defined') |
+         map(attribute='users') |
+         sum(start=[]) |
+         list }}
+    project_roles: >
+      {{ users |
+         selectattr('roles', 'defined') |
+         map(attribute='roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    domain_roles: >
+      {{ users |
+         selectattr('domain_roles', 'defined') |
+         map(attribute='domain_roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    all_roles: "{{ project_roles + domain_roles }}"
+
+- name: Include users.yml
+  ansible.builtin.include_tasks: users.yml
+  with_items: "{{ os_projects }}"
+  when: project.users is defined
+  loop_control:
+    loop_var: project
+
+- name: Ensure SSH keypairs are registered
+  openstack.cloud.keypair:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth | combine(os_projects_user_auth_overrides) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.1.name }}"
+    public_key_file: "{{ item.1.public_key_file | default(omit) }}"
+    public_key: "{{ item.1.public_key | default(omit) }}"
+    state: present
+  with_subelements:
+    - "{{ os_projects }}"
+    - keypairs
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  vars:
+    # Authentication option overrides for non-admin user as used by os_*
+    # modules' 'auth' argument.
+    os_projects_user_auth_overrides:
+      project_domain_name: "{{ item.0.project_domain }}"
+      user_domain_name: "{{ item.0.user_domain }}"
+      project_name: "{{ item.0.name }}"
+      username: "{{ item.0.users[0].name }}"
+      password: "{{ item.0.users[0].password }}"
+  loop_control:
+    label:
+      project: "{{ item.0.name }}"
+      keypair: "{{ item.1.name }}"
+
+- name: Ensure quotas are set
+  openstack.cloud.quota:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    state: present
+    # Quotas:
+    backup_gigabytes: "{{ quotas.backup_gigabytes | default(omit) }}"
+    backups: "{{ quotas.backups | default(omit) }}"
+    cores: "{{ quotas.cores | default(omit) }}"
+    fixed_ips: "{{ quotas.fixed_ips | default(omit) }}"
+    floating_ips: "{{ quotas.floating_ips | default(omit) }}"
+    floatingip: "{{ quotas.floatingip | default(omit) }}"
+    gigabytes: "{{ quotas.gigabytes | default(omit) }}"
+    gigabytes_lvm: "{{ quotas.gigabytes_lvm | default(omit) }}"
+    injected_file_size: "{{ quotas.injected_file_size | default(omit) }}"
+    injected_files: "{{ quotas.injected_files | default(omit) }}"
+    injected_path_size: "{{ quotas.injected_path_size | default(omit) }}"
+    instances: "{{ quotas.instances | default(omit) }}"
+    key_pairs: "{{ quotas.key_pairs | default(omit) }}"
+    loadbalancer: "{{ quotas.loadbalancer | default(omit) }}"
+    network: "{{ quotas.network | default(omit) }}"
+    per_volume_gigabytes: "{{ quotas.per_volume_gigabytes | default(omit) }}"
+    pool: "{{ quotas.pool | default(omit) }}"
+    port: "{{ quotas.port | default(omit) }}"
+    properties: "{{ quotas.properties | default(omit) }}"
+    ram: "{{ quotas.ram | default(omit) }}"
+    rbac_policy: "{{ quotas.rbac_policy | default(omit) }}"
+    router: "{{ quotas.router | default(omit) }}"
+    security_group: "{{ quotas.security_group | default(omit) }}"
+    security_group_rule: "{{ quotas.security_group_rule | default(omit) }}"
+    server_group_members: "{{ quotas.server_group_members | default(omit) }}"
+    server_groups: "{{ quotas.server_groups | default(omit) }}"
+    snapshots: "{{ quotas.snapshots | default(omit) }}"
+    snapshots_lvm: "{{ quotas.snapshots_lvm | default(omit) }}"
+    subnet: "{{ quotas.subnet | default(omit) }}"
+    subnetpool: "{{ quotas.subnetpool | default(omit) }}"
+    volumes: "{{ quotas.volumes | default(omit) }}"
+    volumes_lvm: "{{ quotas.volumes_lvm | default(omit) }}"
+  when:
+    - item.quotas is defined
+  with_items: "{{ os_projects }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    quotas: "{{ item.quotas }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Ensure openrc environment file exists
+  ansible.builtin.template:
+    src: openrc.j2
+    dest: "{{ item.1.openrc_file }}"
+    mode: "0600"
+  with_subelements:
+    - "{{ os_projects }}"
+    - users
+    - skip_missing: true
+  when: item.1.openrc_file is defined
+  loop_control:
+    label:
+      project: "{{ item.0.name }}"
+      user: "{{ item.1.name }}"
+  delegate_to: localhost

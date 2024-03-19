@@ -15,4 +15,5 @@ This collection includes content for interacting with OpenStack clouds.
 - os_openstackclient
 - os_openstacksdk
 - os_projects
+- os_ratings
 - os_volumes

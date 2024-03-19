@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: stackhpc.openstack.os_openstackclient
+    os_openstackclient_venv: "{{ os_ratings_venv }}"
+    os_openstackclient_upper_constraints_file: "{{ os_ratings_upper_constraints_file | default(None) }}"

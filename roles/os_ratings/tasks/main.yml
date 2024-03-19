@@ -1,0 +1,22 @@
+---
+- name: Ensure Cloudkitty client is installed # noqa package-latest
+  ansible.builtin.pip:
+    name:
+      - python-cloudkittyclient
+    state: latest
+    extra_args: "{% if os_ratings_upper_constraints_file %}-c {{ os_ratings_upper_constraints_file }}{% endif %}"
+    virtualenv: "{{ os_ratings_venv }}"
+  run_once: true
+
+- name: Set a fact about the Ansible python interpreter
+  ansible.builtin.set_fact:
+    old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python3') }}"
+
+- name: Import ratings.yml
+  ansible.builtin.import_tasks: ratings.yml
+  vars:
+    ansible_python_interpreter: "{{ os_ratings_venv ~ '/bin/python' if os_ratings_venv != None else old_ansible_python_interpreter }}"
+    openstack: "{{ os_ratings_venv ~ '/bin/' if os_ratings_venv else '' }}openstack"
+    os_ratings_hashmap_field_mapping_services: "{{ os_ratings_hashmap_field_mappings | map(attribute='service') | list }}"
+    os_ratings_hashmap_service_mapping_services: "{{ os_ratings_hashmap_service_mappings | map(attribute='service') | list }}"
+  environment: "{{ os_ratings_environment }}"

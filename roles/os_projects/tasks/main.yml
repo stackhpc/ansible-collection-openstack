@@ -231,13 +231,6 @@
   loop_control:
     label: "{{ item.name }}"
 
-# This variable is unset before we set it, and it does not appear to be
-# possible to unset a variable in Ansible.
-- name: Set a fact to reset the Ansible python interpreter
-  ansible.builtin.set_fact:
-    ansible_python_interpreter: "{{ old_ansible_python_interpreter }}"
-  when: os_projects_venv != None
-
 - name: Ensure openrc environment file exists
   ansible.builtin.template:
     src: openrc.j2

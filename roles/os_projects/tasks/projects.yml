@@ -184,7 +184,6 @@
     backup_gigabytes: "{{ quotas.backup_gigabytes | default(omit) }}"
     backups: "{{ quotas.backups | default(omit) }}"
     cores: "{{ quotas.cores | default(omit) }}"
-    fixed_ips: "{{ quotas.fixed_ips | default(omit) }}"
     floating_ips: "{{ quotas.floating_ips | default(omit) }}"
     floatingip: "{{ quotas.floatingip | default(omit) }}"
     gigabytes: "{{ quotas.gigabytes | default(omit) }}"

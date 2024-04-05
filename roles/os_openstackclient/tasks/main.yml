@@ -20,7 +20,6 @@
     - name: Check whether the virtualenv directory exists
       ansible.builtin.stat:
         path: "{{ os_openstackclient_venv | dirname }}"
-        get_md5: false
         get_checksum: false
         mime: false
       register: os_openstackclient_venv_stat

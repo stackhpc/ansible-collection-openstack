@@ -1,0 +1,110 @@
+---
+- name: List modules
+  ansible.builtin.command: >
+    {{ openstack }} rating module list -f json
+  register: modules
+  changed_when: false
+
+- name: Enable hashmap module
+  ansible.builtin.command: >
+    {{ openstack }} rating module enable hashmap
+  when: not (modules.stdout | from_json | selectattr('Module', 'equalto', 'hashmap') | first)['Enabled'] | bool
+  changed_when: true
+
+- name: List hashmap services
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap service list -f json
+  register: hashmap_services
+  changed_when: false
+
+- name: Create hashmap services
+  vars:
+    existing_services: "{{ hashmap_services.stdout | from_json | map(attribute='Name') | list }}"
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap service create {{ item }}
+  loop: "{{ (os_ratings_hashmap_field_mapping_services + os_ratings_hashmap_service_mapping_services) | unique | list }}"
+  when: item not in existing_services
+  changed_when: true
+
+- name: List hashmap groups
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap group list -f json
+  register: hashmap_groups
+  changed_when: false
+
+- name: Create hashmap groups
+  vars:
+    existing_groups: "{{ hashmap_groups.stdout | from_json | map(attribute='Name') | list }}"
+    field_mapping_groups: "{{ query('subelements', os_ratings_hashmap_field_mappings, 'mappings') | map(attribute='1.group') | select('defined') | list }}"
+    service_mapping_groups: "{{ os_ratings_hashmap_service_mappings | map(attribute='group') | select('defined') | list }}"
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap group create {{ item }}
+  loop: "{{ (field_mapping_groups + service_mapping_groups) | unique | list }}"
+  when:
+    - item is not none and item | length > 0
+    - item not in existing_groups
+  changed_when: true
+
+# List again to get IDs of created services.
+- name: List hashmap services
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap service list -f json
+  register: hashmap_services
+  changed_when: false
+
+# List again to get IDs of created groups.
+- name: List hashmap groups
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap group list -f json
+  register: hashmap_groups
+  changed_when: false
+
+- name: List hashmap fields
+  vars:
+    service_id: "{{ (hashmap_services.stdout | from_json | selectattr('Name', 'equalto', item) | first)['Service ID'] }}"
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap field list {{ service_id }} -f json
+  loop: "{{ os_ratings_hashmap_field_mapping_services }}"
+  register: hashmap_fields
+  changed_when: false
+
+# Field mappings
+
+- name: Include field mappings
+  ansible.builtin.include_tasks: field-mappings.yml
+  vars:
+    fields_result: "{{ hashmap_fields.results | selectattr('item', 'equalto', field.service) | first }}"
+    fields: "{{ fields_result.stdout | from_json }}"
+    service_id: "{{ (hashmap_services.stdout | from_json | selectattr('Name', 'equalto', field.service) | first)['Service ID'] }}"
+  loop: "{{ os_ratings_hashmap_field_mappings }}"
+  loop_control:
+    loop_var: field
+
+# Service mappings
+
+- name: List hashmap service mappings
+  vars:
+    service_id: "{{ (hashmap_services.stdout | from_json | selectattr('Name', 'equalto', item) | first)['Service ID'] }}"
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap mapping list -f json --service-id {{ service_id }}
+  loop: "{{ os_ratings_hashmap_service_mapping_services }}"
+  register: hashmap_mappings
+  changed_when: false
+
+- name: Create hashmap service mappings
+  vars:
+    mappings_result: "{{ hashmap_mappings.results | selectattr('item', 'equalto', item.service) | first }}"
+    mappings: "{{ mappings_result.stdout | from_json }}"
+    service_id: "{{ (hashmap_services.stdout | from_json | selectattr('Name', 'equalto', item.service) | first)['Service ID'] }}"
+    group_id: "{{ (hashmap_groups.stdout | from_json | selectattr('Name', 'equalto', item.group) | first)['Group ID'] | default('') if item.group is defined else
+      '' }}"
+  ansible.builtin.command: >
+    {{ openstack }} rating hashmap mapping create
+    {{ item.cost }}
+    --service-id {{ service_id }}
+    {% if group_id | length > 0 %}--group-id {{ group_id }}{% endif %}
+    --type {{ item.type }}
+  loop: "{{ os_ratings_hashmap_service_mappings }}"
+  # Condition could be better, but should work with current values.
+  when: mappings | length == 0
+  changed_when: true

@@ -89,7 +89,7 @@
     cloud: "{{ os_projects_cloud | default(omit) }}"
     interface: "{{ os_projects_interface | default(omit, true) }}"
     name: "{{ item.name }}"
-    description: "{{ item.description }}"
+    description: "{{ item.description | default(omit) }}"
     domain_id: "{{ domain_is_id | ternary(item.project_domain, os_projects_domain_to_id[item.project_domain]) }}"
     state: present
     enabled: true

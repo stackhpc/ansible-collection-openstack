@@ -32,7 +32,7 @@
     filename: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.vmlinuz"
   with_items: "{{ os_images_list | list }}"
   vars:
-    visibility: "{{ item.visibility | default(item.is_public | ternary('public', 'private') if item.is_public is defined else os_images_visibility) }}"
+    visibility: "{{ os_images_visibility | default(item.0.visibility | default(item.0.is_public | default(true) | ternary('public', 'private', true))) }}"
   loop_control:
     label: "{{ item.name }}"
   when:
@@ -73,7 +73,7 @@
     filename: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.initrd"
   with_items: "{{ os_images_list | list }}"
   vars:
-    visibility: "{{ item.visibility | default(item.is_public | ternary('public', 'private') if item.is_public is defined else os_images_visibility) }}"
+    visibility: "{{ os_images_visibility | default(item.0.visibility | default(item.0.is_public | default(true) | ternary('public', 'private', true))) }}"
   loop_control:
     label: "{{ item.name }}"
   when:
@@ -115,7 +115,7 @@
     ramdisk: "{{ item.2.id if is_baremetal else omit }}"
   vars:
     is_baremetal: "{{ item.0.elements is defined and 'baremetal' in item.0.elements }}"
-    visibility: "{{ item.0.visibility | default(item.0.is_public | ternary('public', 'private') if item.0.is_public is defined else os_images_visibility) }}"
+    visibility: "{{ os_images_visibility | default(item.0.visibility | default(item.0.is_public | default(true) | ternary('public', 'private', true))) }}"
   with_together:
     - "{{ os_images_list | list }}"
     - "{{ kernel_result.results }}"

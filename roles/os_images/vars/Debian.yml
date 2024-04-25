@@ -3,6 +3,7 @@
 os_images_package_dependencies:
   - dosfstools
   - gdisk
+  - "{% if os_images_git_elements | length > 0 %}git{% endif %}"
   - kpartx
   - lvm2
   - qemu-utils

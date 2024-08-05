@@ -14,7 +14,7 @@
 
 - name: Frobnicate to inject project ID
   ansible.builtin.set_fact:
-    os_networks_rbac_with_id: "{{ os_networks_rbac_with_id + [item | combine({'network_id': os_networks_admin_networks.openstack_networks | selectattr('name', 'equalto',
+    os_networks_rbac_with_id: "{{ os_networks_rbac_with_id + [item | combine({'network_id': os_networks_admin_networks.networks | selectattr('name', 'equalto',
       item['network']) | map(attribute='id') | first})] }}"
   with_items: "{{ os_networks_rbac }}"
   vars:
@@ -34,7 +34,7 @@
 
 - name: Set admin project ID
   ansible.builtin.set_fact:
-    admin_project_id: "{{ admin_project_data.openstack_projects | map(attribute='id') | first }}"
+    admin_project_id: "{{ admin_project_data.projects | map(attribute='id') | first }}"
 
 # Retrieve project IDs of other OpenStack projects
 - name: Lookup OpenStack project IDs
@@ -66,5 +66,5 @@
     object_id: "{{ item[0].network_id }}"
     object_type: network
     project_id: "{{ admin_project_id }}"
-    target_project_id: "{{ project_data.openstack_projects | selectattr('name', 'equalto', item[1]) | map(attribute='id') | first }}"
+    target_project_id: "{{ project_data.projects | selectattr('name', 'equalto', item[1]) | map(attribute='id') | first }}"
   loop: "{{ os_networks_rbac_expanded }}"

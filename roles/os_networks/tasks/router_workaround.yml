@@ -16,6 +16,7 @@
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
   register: _networks_query
+  when: item.network is defined
 
 - name: Ensure router is registered with neutron
   openstack.cloud.router:
@@ -26,7 +27,7 @@
     interface: "{{ os_networks_interface | default(omit, true) }}"
     name: "{{ item.name }}"
     interfaces: "{{ item.interfaces | default(omit) }}"
-    network: "{{ _networks_query.networks[0].id }}"
+    network: "{{ _networks_query.networks[0].id if _networks_query is not skipped else omit }}"
     external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
     project: "{{ item.project | default(omit) }}"
     state: "{{ item.state | default(omit) }}"

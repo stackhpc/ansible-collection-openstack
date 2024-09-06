@@ -44,7 +44,8 @@ Each item should be a dict containing the following items:
   - `name`: The name of the user.
   - `description`: User name/description (optional)
   - `email`: User email address (optional)
-  - `password`: The user's password. This is not updated after creation.
+  - `password`: The user's password (optional). This is not updated after
+    creation.
   - `roles`: Optional list of roles to assign to the user in the project.
   - `domain_roles`: Optional list of roles to assign to the user in the user
     domain.

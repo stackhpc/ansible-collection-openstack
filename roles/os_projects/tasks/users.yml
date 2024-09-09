@@ -9,7 +9,7 @@
     name: "{{ item.name }}"
     description: "{{ item.description | default(omit) }}"
     email: "{{ item.email | default(omit) }}"
-    password: "{{ item.password }}"
+    password: "{{ item.password | default(omit) }}"
     default_project: "{{ project.name }}"
     domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
     state: present

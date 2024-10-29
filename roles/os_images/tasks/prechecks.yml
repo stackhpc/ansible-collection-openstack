@@ -8,6 +8,9 @@
   register: result
 
 - name: Display warning message about the container engine
-  ansible.builtin.debug:
-    msg: "Container runtime engine is not installed. Elements that require it will fail when building."
-  when: result.rc != 0
+  ansible.builtin.assert:
+    that:
+      - result.rc = 0
+    fail_msg: >
+      Container runtime engine could not be found - make sure it is installed.
+      Elements that depend on it will likely fail when building.

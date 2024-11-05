@@ -1,11 +1,13 @@
 ---
 # List of package dependencies.
 os_images_package_dependencies:
+  - debootstrap
   - dosfstools
   - gdisk
   - "{% if os_images_git_elements | length > 0 %}git{% endif %}"
   - kpartx
   - lvm2
+  - python3-venv
   - qemu-utils
   - squashfs-tools
   - xz-utils

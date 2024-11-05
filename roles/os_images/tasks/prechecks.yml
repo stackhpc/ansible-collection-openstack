@@ -1,0 +1,16 @@
+---
+# Here a quick check for the presence of Docker (or an alias for Podman)
+# Display a warning if not found
+- name: Check if container engine is installed
+  ansible.builtin.command: which docker
+  changed_when: false
+  ignore_errors: true
+  register: result
+
+- name: Display warning message about the container engine
+  ansible.builtin.assert:
+    that:
+      - result.rc = 0
+    fail_msg: >
+      Container runtime engine could not be found - make sure it is installed.
+      Elements that depend on it will likely fail when building.

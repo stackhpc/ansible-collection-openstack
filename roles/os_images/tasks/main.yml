@@ -3,6 +3,12 @@
   ansible.builtin.set_fact:
     old_ansible_python_interpreter: "{{ ansible_python_interpreter | default('/usr/bin/python3') }}"
 
+- name: Run prechecks
+  ansible.builtin.import_tasks: prechecks.yml
+
+- name: Prerequisite tasks
+  ansible.builtin.import_tasks: prereqs.yml
+
 - name: Build or download images
   ansible.builtin.import_tasks: images.yml
   when: os_images_build | bool

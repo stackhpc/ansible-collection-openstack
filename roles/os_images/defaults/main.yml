@@ -9,8 +9,8 @@ os_images_dib_venv: "{{ os_images_venv }}"
 # State of python dependencies.
 os_images_package_state: present
 
-# Use Antelope upper constraints as openstacksdk 1.0.1 and openstackclient 6.2.0 are required
-os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
+# Use Caracal upper constraints
+os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
 
 # Upper constraints file for installation of DIB to build images.
 os_images_dib_upper_constraints_file: ""

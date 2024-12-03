@@ -2,7 +2,7 @@
 # Path to a directory in which to create a virtualenv.
 os_ratings_venv:
 # Upper constraints file for installation of Python dependencies.
-os_ratings_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
+os_ratings_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
 
 # Environment variables for use with OpenStack CLI.
 os_ratings_environment: {}

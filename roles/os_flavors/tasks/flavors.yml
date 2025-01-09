@@ -17,3 +17,14 @@
     extra_specs: "{{ item.extra_specs | default(omit) }}"
     state: "{{ item.state | default('present') }}"
   with_items: "{{ os_flavors }}"
+
+- name: Map nova flavors to projects
+  openstack.cloud.compute_flavor_access:
+    auth_type: "{{ os_flavors_auth_type }}"
+    auth: "{{ os_flavors_auth }}"
+    cacert: "{{ os_flavors_cacert | default(omit) }}"
+    interface: "{{ os_flavors_interface | default(omit, true) }}"
+    name: "{{ item.0.name }}"
+    state: "{{ item.0.state | default('present') }}"
+    project: "{{ item.1| default(omit) }}"
+  loop: "{{ lookup('subelements', os_flavors, 'project', {'skip_missing': True}) }}"

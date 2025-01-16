@@ -34,4 +34,4 @@ os_volumes: [] # noqa: var-naming[no-role-prefix]
 os_volumes_types: []
 
 # A file or URL containing Python upper constraints.
-os_volumes_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
+os_volumes_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1

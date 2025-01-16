@@ -10,4 +10,4 @@ os_openstackclient_state: present
 # Version of python-openstackclient to install, or unrestricted if empty.
 os_openstackclient_version:
 # Upper constraints file for installation of openstackclient.
-os_openstackclient_upper_constraints_file: https://releases.openstack.org/constraints/upper/2023.1
+os_openstackclient_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1

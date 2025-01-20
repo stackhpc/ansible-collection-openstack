@@ -26,5 +26,5 @@
     interface: "{{ os_flavors_interface | default(omit, true) }}"
     name: "{{ item.0.name }}"
     state: "{{ item.0.state | default('present') }}"
-    project: "{{ item.1| default(omit) }}"
+    project: "{{ item.1 | default(omit) }}"
   loop: "{{ lookup('subelements', os_flavors, 'project', {'skip_missing': True}) }}"

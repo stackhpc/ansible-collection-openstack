@@ -1,8 +1,8 @@
 OpenStack Flavors
 =================
 
-This role can be used to register flavors in Nova using the
-`openstack.cloud.compute_flavor` module.
+This role can be used to register flavors in Nova and map them to projects
+using the `openstack.cloud.compute_flavor` module.
 
 Requirements
 ------------
@@ -31,6 +31,15 @@ containing the items 'name', 'ram', 'disk', and 'vcpus'. Optionally, the dict
 may contain 'ephemeral', 'flavorid', 'rxtx_factor' and 'swap' items.
 Optionally, the dict may also contain an item 'extra_specs', which is a dict of
 metadata to attach to the flavor object.
+
+`is_public` is a mandatory parameter when mapping flavor to project. Non public 
+flavor can't be mapped. However there is possibility to create flavor which 
+is private and not mapped to any project. Only 'true' and 'false' are 
+allowed here.
+
+`project` list of project to which flavor should be mapped. In other 
+words: this flavor will be visible and usable only in said project. It is
+ a dict, withpossible one element.
 
 Dependencies
 ------------
@@ -62,6 +71,25 @@ The following playbook registers a Nova flavor.
               extra_specs:
                 hw:cpu_policy: "dedicated"
                 hw:numa_nodes: "1"
+
+The following playbook will allow uasge of `flavor-1` only in project `projectA`.
+
+    ---
+    - name: Map Nova flavors to projects
+      hosts: localhost
+      roles:
+        - role: openstack.cloud.compute_flavor_access
+          os_flavors_venv: "~/os-flavors-venv"
+          os_flavors_auth_type: "password"
+          os_flavors_auth:
+            project_name: <keystone project>
+            username: <keystone user>
+            password: <keystone password>
+            auth_url: <keystone auth URL>
+          os_flavors:
+            - name: flavor-1
+              state: private
+              project: "projectA"
 
 Author Information
 ------------------

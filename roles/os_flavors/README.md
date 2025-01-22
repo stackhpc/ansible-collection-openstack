@@ -32,14 +32,15 @@ may contain 'ephemeral', 'flavorid', 'rxtx_factor' and 'swap' items.
 Optionally, the dict may also contain an item 'extra_specs', which is a dict of
 metadata to attach to the flavor object.
 
-`is_public` is a mandatory parameter when mapping flavor to project. Non public 
-flavor can't be mapped. However there is possibility to create flavor which 
+`is_public` default is `true`. It is a mandatory parameter when mapping flavor
+to project, and it have to be set to `false` in that case. Non public 
+flavor can't be mapped.  However there is possibility to create flavor which 
 is private and not mapped to any project. Only 'true' and 'false' are 
 allowed here.
 
 `project` list of project to which flavor should be mapped. In other 
 words: this flavor will be visible and usable only in said project. It is
- a dict, withpossible one element.
+a dict, with possible one element.
 
 Dependencies
 ------------
@@ -88,7 +89,7 @@ The following playbook will allow uasge of `flavor-1` only in project `projectA`
             auth_url: <keystone auth URL>
           os_flavors:
             - name: flavor-1
-              state: private
+              is_public: false
               project: "projectA"
 
 Author Information

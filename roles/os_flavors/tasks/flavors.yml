@@ -12,7 +12,7 @@
     ephemeral: "{{ item.ephemeral | default(omit) }}"
     swap: "{{ item.swap | default(omit) }}"
     rxtx_factor: "{{ item.rxtx_factor | default(omit) }}"
-    is_public: "{{ item.is_public | default(omit) }}"
+    is_public: "{{ item.is_public | default('true') }}"
     flavorid: "{{ item.flavorid | default(omit) }}"
     extra_specs: "{{ item.extra_specs | default(omit) }}"
     state: "{{ item.state | default('present') }}"

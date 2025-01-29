@@ -38,9 +38,9 @@ flavor can't be mapped.  However there is possibility to create flavor which
 is private and not mapped to any project. Only 'true' and 'false' are 
 allowed here.
 
-`project` list of project to which flavor should be mapped. In other 
-words: this flavor will be visible and usable only in said project. It is
-a dict, with possible one element.
+`project` single value, or list of projects, to which flavor should be mapped. 
+In other words: this flavor will be visible and usable only in said project(s).
+
 
 Dependencies
 ------------

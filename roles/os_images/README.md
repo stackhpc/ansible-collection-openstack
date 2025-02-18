@@ -118,6 +118,33 @@ will be replaced with the newly built image if `os_images_upload` is set to `Tru
 
 `os_images_hide`: Whether or not to hide the images in Glance list. Hiding images is available as an option in image retirement/promotion process. Defaults to `False`.
 
+Changing platform architecture in os_images
+-------------------------------------------
+
+The `Generate diskimage-builder images` job in the ``os_images`` role can build an 
+image for a chosen CPU architecture by defining the ``cpu_arch`` image property before 
+calling the ``os_images`` role. This is an [example](https://github.com/stackhpc/kayobe/blob/18ca11b47af42ce10507516c2f9e34f447d5e39a/ansible/overcloud-host-image-build.yml#L21_) 
+of a playbook calling the ``os_image`` role & below is an example of how to set the 
+``cpu_arch`` image property in a configuration like StackHPC-Kayobe-Config:
+
+```yaml
+   stackhpc_overcloud_dib_host_image:
+     name: "{{ image_name }}"
+     elements: "{{ dib_elements }}"
+     env: "{{ dib_env_vars }}"
+     packages: "{{ dib_packages }}"
+     properties:
+       - cpu_arch: "arm64"
+```
+
+The ``cpu_arch`` variable will also be set as an image property within the `Upload 
+cloud tenant images` task in the ``upload.yml`` task.
+
+If left unset the ``cpu_arch`` variable will default to `x86_64` for ``upload.yml``.
+However, if not set, the `Generate diskimage-builder images` job will takes the 
+disk image builder's default.
+
+
 Dependencies
 ------------
 

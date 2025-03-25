@@ -113,6 +113,7 @@
     properties: "{{ os_images_common_properties | combine(item.0.properties | default({})) or omit }}"
     kernel: "{{ item.1.id if is_baremetal else omit }}"
     ramdisk: "{{ item.2.id if is_baremetal else omit }}"
+    use_import: "{{ item.0.use_import | default(omit) }}"
   vars:
     is_baremetal: "{{ item.0.elements is defined and 'baremetal' in item.0.elements }}"
     visibility: "{{ item.0.visibility | default(item.0.is_public | ternary('public', 'private') if item.0.is_public is defined else os_images_visibility) }}"

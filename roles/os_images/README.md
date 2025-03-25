@@ -72,6 +72,9 @@ mutually exclusive where each contain:
 * `visibility`: (optional) Allowed values are 'public', 'private', 'shared'
 or 'community'. Default is 'public'
 * `owner`: (optional) ID of the project that should own the uploaded image.
+* `use_import`: (optional) Whether to use an import workflow instead of direct upload.
+  Useful in conjuction with an [interoperable image import](https://docs.openstack.org/glance/latest/admin/interoperable-image-import.html).
+  Defaults to 'false'.
 
 `os_images_common`: A set of elements to include in every image listed.
 Defaults to `cloud-init enable-serial-console stable-interface-names`.

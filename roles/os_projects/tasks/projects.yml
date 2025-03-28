@@ -167,9 +167,7 @@
       username: "{{ item.0.users[0].name }}"
       password: "{{ item.0.users[0].password }}"
   loop_control:
-    label:
-      project: "{{ item.0.name }}"
-      keypair: "{{ item.1.name }}"
+    label: "{{ item.0.name }}: {{ item.1.name }}"
 
 - name: Ensure quotas are set
   openstack.cloud.quota:
@@ -232,7 +230,5 @@
     - skip_missing: true
   when: item.1.openrc_file is defined
   loop_control:
-    label:
-      project: "{{ item.0.name }}"
-      user: "{{ item.1.name }}"
+    label: "{{ item.0.name }}: {{ item.1.name }}"
   delegate_to: localhost

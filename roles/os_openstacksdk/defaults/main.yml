@@ -13,4 +13,4 @@ os_openstacksdk_state: present
 # Version of openstacksdk to install, or unrestricted if empty.
 os_openstacksdk_version:
 # Upper constraints file for installation of openstacksdk.
-os_openstacksdk_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
+os_openstacksdk_upper_constraints_file: https://releases.openstack.org/constraints/upper/master

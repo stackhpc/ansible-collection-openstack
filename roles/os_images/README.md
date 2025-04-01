@@ -57,6 +57,10 @@ mutually exclusive where each contain:
   This is a dict of the form of `KEY: VALUE`.
 * `packages`: (optional) list of packages to install in the image.
 * `size`: (optional) size to make the image filesystem.
+* `architecture`: (optional) image CPU architecture to pass to diskimage-builder `-a`.
+  If unset, default to the diskimage-builder default architecture: `x86_64`, and upload
+  Glance images with the `cpu_arch: "x86_64"` image property.
+  When setting, consider also setting `properties.cpu_arch` to a corresponding value.
 * `properties`: (optional) dict of properties to set on the glance image.
   Common image properties are available
   [here](https://docs.openstack.org/glance/latest/user/common-image-properties.html).
@@ -75,6 +79,9 @@ or 'community'. Default is 'public'
 
 `os_images_common`: A set of elements to include in every image listed.
 Defaults to `cloud-init enable-serial-console stable-interface-names`.
+
+`os_images_common_properties`: A dict of Glance image properties to set on all images.
+Defaults to an empty dict, and is overridden by `os_images_list.*.properties`.
 
 `os_images_dib_pkg_name`: Optionally customise the name parameter passed 
 to the ansible.builtin.pip module when installing diskimage-builder. This can
@@ -121,29 +128,30 @@ will be replaced with the newly built image if `os_images_upload` is set to `Tru
 Changing platform architecture in os_images
 -------------------------------------------
 
-The `Generate diskimage-builder images` job in the ``os_images`` role can build an 
-image for a chosen CPU architecture by defining the ``cpu_arch`` image property before 
-calling the ``os_images`` role. This is an [example](https://github.com/stackhpc/kayobe/blob/18ca11b47af42ce10507516c2f9e34f447d5e39a/ansible/overcloud-host-image-build.yml#L21_) 
-of a playbook calling the ``os_image`` role & below is an example of how to set the 
-``cpu_arch`` image property in a configuration like StackHPC-Kayobe-Config:
+The target CPU architecture for each image defined in `os_images_list` may be set to any architecture supported by diskimage-builder with the `architecture` parameter.
+
+If it is unset, an image with the default diskimage-builder architecture (`x86_64`) will be built and optionally uploaded to Glance, with the Glance image property `cpu_arch` set to `x86_64`.
+
+If `architecture` is set for an image, consider also setting `properties.cpu_arch` to an architecture [supported by Glance](https://docs.openstack.org/glance/latest/admin/useful-image-properties.html#image-property-keys-and-values). An example is given below.
 
 ```yaml
-   stackhpc_overcloud_dib_host_image:
-     name: "{{ image_name }}"
-     elements: "{{ dib_elements }}"
-     env: "{{ dib_env_vars }}"
-     packages: "{{ dib_packages }}"
+   os_images_list:
+   - name: ubuntu
+     elements:
+       - ubuntu
+     packages:
+       - biosdevname
+     type: qcow2
+   - name: ubuntu-aarch64
+     architecture: arm64
+     elements:
+       - ubuntu
      properties:
-       - cpu_arch: "arm64"
+       cpu_arch: aarch64
+     packages:
+       - biosdevname
+     type: qcow2
 ```
-
-The ``cpu_arch`` variable will also be set as an image property within the `Upload 
-cloud tenant images` task in the ``upload.yml`` task.
-
-If left unset the ``cpu_arch`` variable will default to `x86_64` for ``upload.yml``.
-However, if not set, the `Generate diskimage-builder images` job will takes the 
-disk image builder's default.
-
 
 Dependencies
 ------------

@@ -116,12 +116,15 @@
   vars:
     # NOTE(m-anson): When architecture isn't defined for an
     # image, assume that we should set cpu_arch: x86_64 as
-    # this is the diskimage-builder default.
+    # this is the diskimage-builder default. If an architecture
+    # of arm64 or aarch64 is defined, set cpu_arch: aarch64. In
+    # all other cases, leave it up to the operator to set
+    # properties.cpu_arch.
     cpu_arch_properties: >-
       {{
-          {}
-          if item.0.architecture is defined
-          else {"cpu_arch": "x86_64"}
+          {"cpu_arch": "aarch64"}
+          if (item.0.architecture is defined and item.0.architecture in ["arm64", "aarch64"])
+          else ({"cpu_arch": "x86_64"} if item.0.architecture is not defined else {})
       }}
     is_baremetal: "{{ item.0.elements is defined and 'baremetal' in item.0.elements }}"
     visibility: "{{ item.0.visibility | default(item.0.is_public | ternary('public', 'private') if item.0.is_public is defined else os_images_visibility) }}"

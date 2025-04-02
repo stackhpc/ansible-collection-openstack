@@ -59,8 +59,10 @@ mutually exclusive where each contain:
 * `size`: (optional) size to make the image filesystem.
 * `architecture`: (optional) image CPU architecture to pass to diskimage-builder `-a`.
   If unset, default to the diskimage-builder default architecture: `x86_64`, and upload
-  Glance images with the `cpu_arch: "x86_64"` image property.
-  When setting, consider also setting `properties.cpu_arch` to a corresponding value.
+  Glance images with the `cpu_arch: "x86_64"` image property. If architecture is set
+  to `arm64` or `aarch64`, Glance images with the `cpu_arch: "aarch64"` image property
+  When setting to other values, consider also setting `properties.cpu_arch` to a
+  corresponding value.
 * `properties`: (optional) dict of properties to set on the glance image.
   Common image properties are available
   [here](https://docs.openstack.org/glance/latest/user/common-image-properties.html).
@@ -130,28 +132,9 @@ Changing platform architecture in os_images
 
 The target CPU architecture for each image defined in `os_images_list` may be set to any architecture supported by diskimage-builder with the `architecture` parameter.
 
-If it is unset, an image with the default diskimage-builder architecture (`x86_64`) will be built and optionally uploaded to Glance, with the Glance image property `cpu_arch` set to `x86_64`.
+If it is unset, an image with the default diskimage-builder architecture (`x86_64`) will be built and optionally uploaded to Glance, with the Glance image property `cpu_arch` set to `x86_64`. If it is set to `arm64` or `aarch64`, images will be uploaded to Glance with the Glance image property `cpu_arch` set to `aarch64`.
 
-If `architecture` is set for an image, consider also setting `properties.cpu_arch` to an architecture [supported by Glance](https://docs.openstack.org/glance/latest/admin/useful-image-properties.html#image-property-keys-and-values). An example is given below.
-
-```yaml
-   os_images_list:
-   - name: ubuntu
-     elements:
-       - ubuntu
-     packages:
-       - biosdevname
-     type: qcow2
-   - name: ubuntu-aarch64
-     architecture: arm64
-     elements:
-       - ubuntu
-     properties:
-       cpu_arch: aarch64
-     packages:
-       - biosdevname
-     type: qcow2
-```
+If setting to a different `architecture`, consider also setting `properties.cpu_arch` to an architecture [supported by Glance](https://docs.openstack.org/glance/latest/admin/useful-image-properties.html#image-property-keys-and-values).
 
 Dependencies
 ------------

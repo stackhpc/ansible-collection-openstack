@@ -45,8 +45,7 @@ os_images_common: cloud-init enable-serial-console stable-interface-names
 #     type: qcow2
 os_images_list: []
 # Common properties to apply to all glance images.
-os_images_common_properties:
-  cpu_arch: x86_64
+os_images_common_properties: {}
 
 # OpenStack authentication type: passed to the os_image Ansible module
 os_images_auth_type: password

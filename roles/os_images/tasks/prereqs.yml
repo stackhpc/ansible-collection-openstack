@@ -29,3 +29,15 @@
     state: directory
     mode: "0755"
   become: true
+
+- name: Run multiarch/qemu-user-static image to support cross-arch build
+  ansible.builtin.command:
+    # We already have a precheck for presence of docker executable so use it here
+    cmd: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  # Using --reset means that we always change something
+  changed_when: true
+  become: true
+  when: os_images_list |
+        selectattr("architecture", "defined") |
+        rejectattr("architecture", "equalto", ansible_facts.architecture) |
+        length > 0

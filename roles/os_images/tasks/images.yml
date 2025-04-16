@@ -83,8 +83,9 @@
 - name: Generate diskimage-builder images
   vars:
     dib_args: >-
-      {% if item.size is defined %}--image-size {{ item.size }}{% endif %} {% if item.type is defined %}-t {{ item.type }}{% endif %} {% if item.packages | default
-      %}-p {{ item.packages | join(',') }}{% endif %} {{ os_images_common }} {{ item.elements | join(' ') }} -o {{ item.name }}
+      {% if item.size is defined %}--image-size {{ item.size }}{% endif %} {% if item.type is defined %}-t {{ item.type }}{% endif %}
+      {% if item.packages | default %}-p {{ item.packages | join(',') }}{% endif %} {{ os_images_common }} {{ item.elements | join(' ') }}
+      -o {{ item.name }} {% if item.architecture is defined %}-a {{ item.architecture }}{% endif %}
   ansible.builtin.shell: . {{ os_images_dib_venv }}/bin/activate && disk-image-create {{ dib_args }} > {{ item.name }}.stdout 2> {{ item.name }}.stderr
   args:
     chdir: "{{ os_images_cache }}/{{ item.name }}"

@@ -29,4 +29,4 @@
     project: "{{ item.1 | default(omit) }}"
   loop: "{{ lookup('subelements', os_flavors, 'project', {'skip_missing': True}) }}"
   when: not item.0.is_public | bool
-
+  

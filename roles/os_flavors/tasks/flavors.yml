@@ -27,5 +27,5 @@
     name: "{{ item.0.name }}"
     state: "{{ item.0.state | default('present') }}"
     project: "{{ item.1 | default(omit) }}"
-  loop: "{{ lookup('subelements', os_flavors, 'project', {'skip_missing': True}) }}"
+  loop: "{{ lookup('subelements', os_flavors, 'project', {'skip_missing': True}, wantlist=True) }}"
   when: not item.0.is_public | bool

@@ -32,9 +32,9 @@ may contain 'ephemeral', 'flavorid', 'rxtx_factor' and 'swap' items.
 Optionally, the dict may also contain an item 'extra_specs', which is a dict of
 metadata to attach to the flavor object.
 
-`is_public` default is `true`. It is a mandatory parameter when mapping flavor
-to project, and it have to be set to `false` in that case. Non public 
-flavor can't be mapped.  However there is possibility to create flavor which 
+`is_public` default is `true`. It is a mandatory parameter when mapping
+flavor to project, and it have to be set to `false` in that case. Public 
+flavor can't be mapped. However there is possibility to create flavor which 
 is private and not mapped to any project. Only 'true' and 'false' are 
 allowed here.
 

@@ -20,9 +20,7 @@
   vars:
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
   loop_control:
-    label:
-      project: "{{ project.name }}"
-      user: "{{ item.name }}"
+    label: "{{ project.name }}: {{ item.name }}"
 
 - name: Ensure users have required project roles
   openstack.cloud.role_assignment:
@@ -41,10 +39,7 @@
     - skip_missing: true
   environment: "{{ os_projects_environment }}"
   loop_control:
-    label:
-      project: "{{ project.name }}"
-      user: "{{ item.0.name }}"
-      role: "{{ item.1 }}"
+    label: "{{ project.name }}: {{ item.0.name }}: {{ item.1 }}"
 
 - name: Ensure users have required domain roles
   openstack.cloud.role_assignment:
@@ -65,7 +60,4 @@
   vars:
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
   loop_control:
-    label:
-      domain: "{{ project.user_domain }}"
-      user: "{{ item.0.name }}"
-      role: "{{ item.1 }}"
+    label: "{{ project.user_domain }}: {{ item.0.name }}: {{ item.1 }}"

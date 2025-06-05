@@ -1,6 +1,9 @@
 ---
 # List of additional host package dependencies to install.
 os_images_package_dependencies_extra: []
+# Whether to enable the CRB repository and install the EPEL repository before
+# installing packages.
+os_images_install_epel_repo: false
 # Path to virtualenv in which to install python dependencies to upload images.
 os_images_venv:
 # Path to virtualenv in which to install DIB to build images.

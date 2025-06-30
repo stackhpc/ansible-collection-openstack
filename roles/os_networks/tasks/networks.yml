@@ -56,6 +56,7 @@
     ipv6_address_mode: "{{ item.1.ipv6_address_mode | default(omit) }}"
     ipv6_ra_mode: "{{ item.1.ipv6_ra_mode | default(omit) }}"
     use_default_subnetpool: "{{ item.1.use_default_subnetpool | default(omit) }}"
+    subnetpool: "{{ item.1.subnetpool | default(omit) }}"
     project: "{{ item.1.project | default(omit) }}"
     state: "{{ item.1.state | default(omit) }}"
   with_subelements:

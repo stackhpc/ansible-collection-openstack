@@ -3,6 +3,10 @@
 os_openstackclient_venv:
 # Whether to install package dependencies.
 os_openstackclient_install_package_dependencies: true
+# Value to use for the pip module's `virtualenv_command` argument when creating the virtualenv
+os_openstackclient_virtualenv_command: "{{ os_openstackclient_virtualenv_python ~ ' -m venv' if os_openstackclient_venv else omit }}"
+# Python interpreter to use in virtualenv command; `os_virtualenv_python` can be used to set this collection wide.
+os_openstackclient_virtualenv_python: "{{ os_virtualenv_python | default('python3.' ~ ansible_facts.python.version.minor) }}"
 
 # State of the openstackclient package.
 os_openstackclient_state: present

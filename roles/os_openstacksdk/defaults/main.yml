@@ -2,7 +2,9 @@
 # Path to a directory in which to create a virtualenv.
 os_openstacksdk_venv:
 # Value to use for the pip module's `virtualenv_command` argument when creating the virtualenv
-os_openstacksdk_virtualenv_command: "{{ 'python3.' ~ ansible_facts.python.version.minor ~ ' -m venv' if os_openstacksdk_venv else omit }}"
+os_openstacksdk_virtualenv_command: "{{ os_openstacksdk_virtualenv_python ~ ' -m venv' if os_openstacksdk_venv else omit }}"
+# Python interpreter to use in virtualenv command; `os_virtualenv_python` can be used to set this collection wide.
+os_openstacksdk_virtualenv_python: "{{ os_virtualenv_python | default('python3.' ~ ansible_facts.python.version.minor) }}"
 
 # Whether to install package dependencies.
 os_openstacksdk_install_package_dependencies: true

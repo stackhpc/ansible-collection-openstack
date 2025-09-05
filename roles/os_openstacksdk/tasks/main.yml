@@ -20,6 +20,14 @@
   become: "{{ ansible_facts.system != 'Darwin' }}"
   when: os_openstacksdk_install_package_dependencies | bool
 
+- name: Remove virtualenv if python version is stale
+  ansible.builtin.file:
+    path: "{{ os_openstacksdk_venv }}"
+    state: absent
+  when:
+    - os_openstacksdk_venv is not none
+    - (os_openstacksdk_venv ~ '/bin/python') | realpath != os_openstacksdk_virtualenv_python | realpath
+
 - name: Ensure the virtualenv directory exists
   when: os_openstacksdk_venv is not none
   block:

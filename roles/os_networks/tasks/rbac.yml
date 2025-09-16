@@ -7,7 +7,7 @@
   openstack.cloud.networks_info:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
-    region_name: "{{ os_networks_region_name | default(omit) }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -27,7 +27,7 @@
   openstack.cloud.project_info:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
-    region_name: "{{ os_networks_region_name | default(omit) }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -43,7 +43,7 @@
   openstack.cloud.project_info:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
-    region_name: "{{ os_networks_region_name | default(omit) }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -62,7 +62,7 @@
   openstack.cloud.neutron_rbac_policy:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
-    region_name: "{{ os_networks_region_name | default(omit) }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"

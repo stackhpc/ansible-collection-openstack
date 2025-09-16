@@ -27,7 +27,7 @@ the `auth_type` argument of `openstack.cloud` Ansible modules.
 `os_deploy_templates_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
-`os_deploy_templates_region_name` is an optional name of an OpenStack region.
+`os_deploy_templates_region` is an optional name of an OpenStack region.
 
 `os_deploy_templates_cacert` is an optional path to a CA certificate bundle.
 

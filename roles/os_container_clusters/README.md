@@ -21,7 +21,7 @@ virtualenv.
 `os_container_clusters_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
-`os_container_clusters_region_name` is an optional name of an OpenStack region.
+`os_container_clusters_region` is an optional name of an OpenStack region.
 
 `os_container_clusters_cacert` is an optional path to a CA certificate bundle.
 

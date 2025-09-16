@@ -3,7 +3,7 @@
   openstack.cloud.compute_flavor:
     auth_type: "{{ os_flavors_auth_type }}"
     auth: "{{ os_flavors_auth }}"
-    region_name: "{{ os_flavors_region_name | default(omit) }}"
+    region_name: "{{ os_flavors_region | default(omit) }}"
     cacert: "{{ os_flavors_cacert | default(omit) }}"
     interface: "{{ os_flavors_interface | default(omit, true) }}"
     name: "{{ item.name }}"
@@ -23,7 +23,7 @@
   openstack.cloud.compute_flavor_access:
     auth_type: "{{ os_flavors_auth_type }}"
     auth: "{{ os_flavors_auth }}"
-    region_name: "{{ os_flavors_region_name | default(omit) }}"
+    region_name: "{{ os_flavors_region | default(omit) }}"
     cacert: "{{ os_flavors_cacert | default(omit) }}"
     interface: "{{ os_flavors_interface | default(omit, true) }}"
     name: "{{ item.0.name }}"

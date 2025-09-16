@@ -16,6 +16,7 @@
     enabled: true
     wait: true
   with_items: "{{ project.users }}"
+  when: item.create_user | default(true) | bool
   environment: "{{ os_projects_environment }}"
   vars:
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"

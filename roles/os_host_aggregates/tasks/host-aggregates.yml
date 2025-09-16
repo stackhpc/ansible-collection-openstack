@@ -3,6 +3,7 @@
   openstack.cloud.host_aggregate:
     auth_type: "{{ os_host_aggregates_auth_type }}"
     auth: "{{ os_host_aggregates_auth }}"
+    region_name: "{{ os_host_aggregates_region_name | default(omit) }}"
     cacert: "{{ os_host_aggregates_cacert | default(omit) }}"
     interface: "{{ os_host_aggregates_interface | default(omit, true) }}"
     name: "{{ item.name }}"

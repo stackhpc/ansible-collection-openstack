@@ -15,6 +15,7 @@
     ansible_python_interpreter: "{{ os_container_clusters_venv ~ '/bin/python' if os_container_clusters_venv != None else old_ansible_python_interpreter }}"
   openstack.cloud.coe_cluster_template:
     auth: "{{ os_container_clusters_auth }}"
+    region_name: "{{ os_container_clusters_region_name | default(omit) }}"
     auth_type: "{{ os_container_clusters_auth_type }}"
     cacert: "{{ os_container_clusters_cacert | default(omit) }}"
     interface: "{{ os_container_clusters_interface | default(omit, true) }}"

@@ -3,6 +3,7 @@
   openstack.cloud.router:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region_name | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -16,6 +17,7 @@
   openstack.cloud.network:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region_name | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -36,6 +38,7 @@
   openstack.cloud.subnet:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region_name | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -72,6 +75,7 @@
 #   openstack.cloud.router:
 #     auth_type: "{{ os_networks_auth_type }}"
 #     auth: "{{ os_networks_auth }}"
+#     region_name: "{{ os_networks_region_name | default(omit) }}"
 #     cacert: "{{ os_networks_cacert | default(omit) }}"
 #     cloud: "{{ os_networks_cloud | default(omit) }}"
 #     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -100,6 +104,7 @@
   openstack.cloud.security_group:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region_name | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"
@@ -114,6 +119,7 @@
   openstack.cloud.security_group_rule:
     auth_type: "{{ os_networks_auth_type }}"
     auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region_name | default(omit) }}"
     cacert: "{{ os_networks_cacert | default(omit) }}"
     cloud: "{{ os_networks_cloud | default(omit) }}"
     interface: "{{ os_networks_interface | default(omit, true) }}"

@@ -46,6 +46,7 @@
   openstack.cloud.volume:
     auth_type: "{{ os_volumes_auth_type }}"
     auth: "{{ os_volumes_auth }}"
+    region_name: "{{ os_volumes_region_name | default(omit) }}"
     display_name: "{{ item.display_name }}"
     display_description: "{{ item.display_description | default(omit) }}"
     image: "{{ item.image | default(omit) }}"

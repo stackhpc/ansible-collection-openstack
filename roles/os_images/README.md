@@ -46,6 +46,8 @@ example, a dict of the form:
 
 `os_images_region`: Define a region to upload the images.  Default is None.
 
+`os_images_region_name` is an optional name of an OpenStack region.
+
 `os_images_cacert` is an optional path to a CA certificate bundle.
 
 `os_images_interface` is the endpoint URL type to fetch from the service

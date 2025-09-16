@@ -21,6 +21,8 @@ Role Variables
 `os_networks_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
+`os_networks_region_name` is an optional name of an OpenStack region.
+
 `os_networks_cacert` is an optional path to a CA certificate bundle.
 
 `os_networks_cloud` is an optional name of a cloud in `clouds.yaml`.

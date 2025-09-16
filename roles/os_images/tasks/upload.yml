@@ -3,6 +3,7 @@
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
     auth: "{{ os_images_auth }}"
+    region_name: "{{ os_images_region_name | default(omit) }}"
     cacert: "{{ os_images_cacert | default(omit) }}"
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"
@@ -21,6 +22,7 @@
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
     auth: "{{ os_images_auth }}"
+    region_name: "{{ os_images_region_name | default(omit) }}"
     cacert: "{{ os_images_cacert | default(omit) }}"
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"
@@ -44,6 +46,7 @@
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
     auth: "{{ os_images_auth }}"
+    region_name: "{{ os_images_region_name | default(omit) }}"
     cacert: "{{ os_images_cacert | default(omit) }}"
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"
@@ -62,6 +65,7 @@
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
     auth: "{{ os_images_auth }}"
+    region_name: "{{ os_images_region_name | default(omit) }}"
     cacert: "{{ os_images_cacert | default(omit) }}"
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"
@@ -85,6 +89,7 @@
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
     auth: "{{ os_images_auth }}"
+    region_name: "{{ os_images_region_name | default(omit) }}"
     cacert: "{{ os_images_cacert | default(omit) }}"
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"
@@ -100,6 +105,7 @@
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
     auth: "{{ os_images_auth }}"
+    region_name: "{{ os_images_region_name | default(omit) }}"
     cacert: "{{ os_images_cacert | default(omit) }}"
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"

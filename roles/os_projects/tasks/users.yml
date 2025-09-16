@@ -3,7 +3,7 @@
   openstack.cloud.identity_user:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
-    region_name: "{{ os_projects_admin_region | default(omit) }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
     cloud: "{{ os_projects_cloud | default(omit) }}"
     interface: "{{ os_projects_interface | default(omit, true) }}"
@@ -27,7 +27,7 @@
   openstack.cloud.role_assignment:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
-    region_name: "{{ os_projects_admin_region | default(omit) }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
     cloud: "{{ os_projects_cloud | default(omit) }}"
     interface: "{{ os_projects_interface | default(omit, true) }}"
@@ -47,7 +47,7 @@
   openstack.cloud.role_assignment:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
-    region_name: "{{ os_projects_admin_region | default(omit) }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
     cacert: "{{ os_projects_cacert | default(omit) }}"
     cloud: "{{ os_projects_cloud | default(omit) }}"
     interface: "{{ os_projects_interface | default(omit, true) }}"

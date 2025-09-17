@@ -21,6 +21,8 @@ virtualenv.
 `os_container_clusters_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
+`os_container_clusters_region` is an optional name of an OpenStack region.
+
 `os_container_clusters_cacert` is an optional path to a CA certificate bundle.
 
 `os_container_clusters_templates` is a list of Magnum container cluster

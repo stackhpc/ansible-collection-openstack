@@ -21,6 +21,8 @@ the `auth_type` argument of `openstack.cloud` Ansible modules.
 `os_projects_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
+`os_projects_region` is an optional name of an OpenStack region.
+
 `os_projects_cacert` is an optional path to a CA certificate bundle.
 
 `os_projects_cloud` is an optional name of a cloud in `clouds.yaml`.

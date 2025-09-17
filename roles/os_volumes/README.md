@@ -20,6 +20,8 @@ Role Variables
 `os_volumes_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
+`os_volumes_region` is an optional name of an OpenStack region.
+
 `os_volumes` is a list of volumes to register. Each item should be a dict
 containing the following items:
 - `display_description`: Optional description of the volume.

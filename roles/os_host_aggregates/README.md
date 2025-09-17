@@ -21,6 +21,8 @@ virtualenv.
 `os_host_aggregates_auth` is a dict containing authentication information
 compatible with the `auth` argument of `openstack.cloud` Ansible modules.
 
+`os_host_aggregates_region` is an optional name of an OpenStack region.
+
 `os_host_aggregates_cacert` is an optional path to a CA certificate bundle.
 
 `os_host_aggregates_interface` is the endpoint URL type to fetch from the

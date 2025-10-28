@@ -9,7 +9,7 @@ os_container_clusters_auth: {}
 # mapping container cluster template attribute names to their values.
 os_container_clusters_templates: []
 # Upper constraints file for installation of python dependencies.
-os_container_clusters_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
+os_container_clusters_upper_constraints_file:
 # Whether to make templates public
 os_container_clusters_public: false
 # Whether to hide templates by default

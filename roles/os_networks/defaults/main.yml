@@ -102,4 +102,4 @@ os_networks_security_groups: []
 os_networks_rbac: []
 
 # Upper constraints file for installation of Python dependencies.
-os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
+os_networks_upper_constraints_file:

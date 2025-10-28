@@ -35,6 +35,8 @@
     user: "{{ item.0.name }}"
     project: "{{ project.name }}"
     role: "{{ item.1 }}"
+    user_domain: "{{ project.user_domain | default(omit, true) }}"
+    project_domain: "{{ project.project_domain | default(omit, true) }}"
     state: present
   with_subelements:
     - "{{ project.users }}"

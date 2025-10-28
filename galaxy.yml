@@ -12,7 +12,7 @@ tags:
   - cloud
   - openstack
 dependencies:
-  "openstack.cloud": ">=2.1.0"
+  "openstack.cloud": ">=2.5.0"
   "community.general": ">=8.2.0"
 repository: https://github.com/stackhpc/ansible-collection-openstack
 documentation: https://github.com/stackhpc/ansible-collection-openstack/blob/main/README.md

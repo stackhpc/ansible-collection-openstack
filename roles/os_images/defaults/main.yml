@@ -13,7 +13,7 @@ os_images_dib_venv: "{{ os_images_venv }}"
 os_images_package_state: present
 
 # Use Caracal upper constraints
-os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
+os_images_upper_constraints_file: https://releases.openstack.org/constraints/upper/2025.1
 
 # Upper constraints file for installation of DIB to build images.
 os_images_dib_upper_constraints_file: ""

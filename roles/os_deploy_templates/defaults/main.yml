@@ -3,7 +3,7 @@
 os_deploy_templates_venv:
 
 # Upper constraints file for installation of Python dependencies.
-os_deploy_templates_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
+os_deploy_templates_upper_constraints_file: https://releases.openstack.org/constraints/upper/2025.1
 
 # Authentication type.
 os_deploy_templates_auth_type:

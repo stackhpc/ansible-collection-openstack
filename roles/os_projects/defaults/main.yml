@@ -38,4 +38,4 @@ os_projects_domains: []
 #   - 'public_key_file': Path to the SSH public key on the control host.
 # 'quotas': Optional dict mapping quota names to their values.
 os_projects: [] # noqa var-naming[no-role-prefix]
-os_projects_upper_constraints_file: https://releases.openstack.org/constraints/upper/2024.1
+os_projects_upper_constraints_file: https://releases.openstack.org/constraints/upper/2025.1

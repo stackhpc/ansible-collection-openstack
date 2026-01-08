@@ -1,0 +1,6 @@
+---
+- name: Test os_config role
+  hosts: localhost
+  connection: local
+  roles:
+    - stackhpc.openstack.os_config

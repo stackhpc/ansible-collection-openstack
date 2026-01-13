@@ -74,7 +74,8 @@ dict containing the following items:
    - `ipv6_ra_mode`: Optional IPv6 router advertisement mode for the subnet.
    - `use_default_subnetpool`: **deprecated** Optional boolean, whether to use
      the default subnet pool for the IP version.
-   - `subnetpool`: Optional subnetpool to use for the subnet.
+   - `subnet_pool`: Optional subnet pool to use for the subnet.
+   - `subnetpool`: Legacy alias for `subnet_pool`.
    - `project`: Optionally create this subnet for a project other than the
      authenticating project.
    - `state`: Optional state of the subnet, default is `present`.

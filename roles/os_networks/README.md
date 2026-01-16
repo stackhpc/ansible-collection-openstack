@@ -87,7 +87,7 @@ dict containing the following items:
   internal interface.
 - `network`: Unique name or ID of the external gateway network.
 - `external_fixed_ips`: Optional list of IP address parameters for the
-  external gateway network. Each is a dictionary with the subnet name or 
+  external gateway network. Each is a dictionary with the subnet name or
   subnet ID and the IP address to assign on the subnet.
 - `project`: Optionally create this router for a project other than the
   authenticating project.
@@ -125,6 +125,24 @@ following items:
   in the designated way.
 
 *NOTE*: RBAC assignments cannot be modified after they are created.
+
+`os_networks_bgp_speakers`: List of BGP speakers to create.
+Each item should be a dict containing the following items:
+- `name`: Name of the BGP speaker.
+- `local_as`: Local autonomous system number (ASN) for the BGP Speaker.
+- `ip_version`: Optional IP version for BGP speaker.
+- `advertise_floating_ip_host_routes`: Whether to advertise fip host routes.
+- `advertise_tenant_networks`: Whether to advertise tenant networks.
+- `state`: Optional state of the BGP speaker, default is `present`.
+
+`os_networks_bgp_peers`: List of BGP peers to create.
+Each item should be a dict containing the following items:
+- `name`: Name that has to be given to the BGP Peer.
+- `peer_ip`: IP address of the BGP peer.
+- `remote_as`: Remote autonomous system number (ASN) for the BGP Peer.
+- `peer_auth_type`: Authentication type, choices: ['none', 'md5'].
+- `password`: Authentication password for the BGP peer when peer_auth_type set.
+- `state`: Optional state of the subnet pool, default is `present`.
 
 Dependencies
 ------------

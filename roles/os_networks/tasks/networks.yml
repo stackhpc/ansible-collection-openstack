@@ -59,7 +59,7 @@
     interface: "{{ os_networks_interface | default(omit, true) }}"
     name: "{{ item.name }}"
     shared: "{{ item.shared | default(omit) }}"
-    prefixes: "{{ item.prefixes }}"
+    prefixes: "{{ item.prefixes | default(omit) }}"
     address_scope: "{{ item.address_scope | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_subnet_pools }}"

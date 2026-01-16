@@ -47,6 +47,20 @@
     ip_version: "{{ item.ip_version | default(omit) }}"
   with_items: "{{ os_networks_address_scopes }}"
 
+- name: Ensure subnet pool is registered with neutron
+  openstack.cloud.subnet_pool:
+    auth_type: "{{ os_networks_auth_type }}"
+    auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
+    cacert: "{{ os_networks_cacert | default(omit) }}"
+    cloud: "{{ os_networks_cloud | default(omit) }}"
+    interface: "{{ os_networks_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    shared: "{{ item.shared | default(omit) }}"
+    prefixes: "{{ item.prefixes }}"
+    address_scope: "{{ item.address_scope }}"
+  with_items: "{{ os_networks_subnet_pools }}"
+
 - name: Ensure subnet is registered with neutron
   openstack.cloud.subnet:
     auth_type: "{{ os_networks_auth_type }}"

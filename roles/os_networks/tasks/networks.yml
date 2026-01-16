@@ -165,7 +165,7 @@
     name: "{{ item.name }}"
     remote_as: "{{ item.remote_as }}"
     peer_ip: "{{ item.peer_ip }}"
-    peer_auth_type: "{{ item.peer_auth_type }}"
+    peer_auth_type: "{{ item.peer_auth_type | default(omit)}}"
     password: "{{ item.password | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_bgp_peers }}"

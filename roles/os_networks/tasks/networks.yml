@@ -47,6 +47,7 @@
     ip_version: "{{ item.ip_version | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_address_scopes }}"
+  when: os_networks_address_scopes | default([]) | length > 0
 
 - name: Ensure subnet pool is registered with neutron
   openstack.cloud.subnet_pool:
@@ -62,6 +63,7 @@
     address_scope: "{{ item.address_scope | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_subnet_pools }}"
+  when: os_networks_subnet_pools | default([]) | length > 0
 
 - name: Ensure subnet is registered with neutron
   openstack.cloud.subnet:

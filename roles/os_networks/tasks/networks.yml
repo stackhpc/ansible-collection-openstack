@@ -136,3 +136,19 @@
   with_subelements:
     - "{{ os_networks_security_groups }}"
     - rules
+
+- name: Ensure BGP Speakers are created
+  openstack.cloud.bgp_speaker:
+    auth_type: "{{ os_networks_auth_type }}"
+    auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
+    cacert: "{{ os_networks_cacert | default(omit) }}"
+    cloud: "{{ os_networks_cloud | default(omit) }}"
+    interface: "{{ os_networks_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    local_as: "{{ item.local_as }}"
+    ip_version: "{{ item.ip_version | default(omit) }}"
+    advertise_floating_ip_host_routes: "{{ item.advertise_floating_ip_host_routes | default(omit) }}"
+    advertise_tenant_networks: "{{ item.advertise_tenant_networks | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  with_items: "{{ os_networks_bgp_speakers }}"

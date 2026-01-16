@@ -137,12 +137,12 @@ Each item should be a dict containing the following items:
 
 `os_networks_bgp_peers`: List of BGP peers to create.
 Each item should be a dict containing the following items:
-- `name`: Name that has to be given to the BGP Peer.
+- `name`: Name of the BGP Peer.
 - `peer_ip`: IP address of the BGP peer.
 - `remote_as`: Remote autonomous system number (ASN) for the BGP Peer.
 - `peer_auth_type`: Authentication type, choices: ['none', 'md5'].
-- `password`: Authentication password for the BGP peer when peer_auth_type set.
-- `state`: Optional state of the subnet pool, default is `present`.
+- `password`: Password for the BGP peer when `peer_auth_type` is 'md5'.
+- `state`: Optional state of the BGP peer, default is `present`.
 
 Dependencies
 ------------

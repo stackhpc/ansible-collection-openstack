@@ -152,6 +152,7 @@
     advertise_tenant_networks: "{{ item.advertise_tenant_networks | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_bgp_speakers }}"
+  when: os_networks_bgp_speakers | default([]) | length > 0
 
 - name: Ensure BGP Peers are created
   openstack.cloud.bgp_peer:
@@ -168,3 +169,4 @@
     password: "{{ item.password | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_bgp_peers }}"
+  when: os_networks_bgp_peers | default([]) | length > 0

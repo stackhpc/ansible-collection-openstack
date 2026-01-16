@@ -45,6 +45,7 @@
     name: "{{ item.name }}"
     shared: "{{ item.shared | default(omit) }}"
     ip_version: "{{ item.ip_version | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_address_scopes }}"
 
 - name: Ensure subnet pool is registered with neutron
@@ -58,7 +59,8 @@
     name: "{{ item.name }}"
     shared: "{{ item.shared | default(omit) }}"
     prefixes: "{{ item.prefixes }}"
-    address_scope: "{{ item.address_scope }}"
+    address_scope: "{{ item.address_scope | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_subnet_pools }}"
 
 - name: Ensure subnet is registered with neutron

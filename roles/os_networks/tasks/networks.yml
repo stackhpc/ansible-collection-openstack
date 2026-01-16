@@ -34,6 +34,19 @@
     port_security_enabled: "{{ item.port_security_enabled | default(omit) }}"
   with_items: "{{ os_networks }}"
 
+- name: Ensure address scope is registered with neutron
+  openstack.cloud.address_scope:
+    auth_type: "{{ os_networks_auth_type }}"
+    auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
+    cacert: "{{ os_networks_cacert | default(omit) }}"
+    cloud: "{{ os_networks_cloud | default(omit) }}"
+    interface: "{{ os_networks_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    shared: "{{ item.shared | default(omit) }}"
+    ip_version: "{{ item.ip_version | default(omit) }}"
+  with_items: "{{ os_networks_address_scopes }}"
+
 - name: Ensure subnet is registered with neutron
   openstack.cloud.subnet:
     auth_type: "{{ os_networks_auth_type }}"

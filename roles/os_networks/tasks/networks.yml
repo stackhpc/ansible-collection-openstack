@@ -152,3 +152,18 @@
     advertise_tenant_networks: "{{ item.advertise_tenant_networks | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   with_items: "{{ os_networks_bgp_speakers }}"
+
+- name: Ensure BGP Peers are created
+  openstack.cloud.bgp_peer:
+    auth_type: "{{ os_networks_auth_type }}"
+    auth: "{{ os_networks_auth }}"
+    region_name: "{{ os_networks_region | default(omit) }}"
+    cacert: "{{ os_networks_cacert | default(omit) }}"
+    cloud: "{{ os_networks_cloud | default(omit) }}"
+    interface: "{{ os_networks_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    remote_as: "{{ item.remote_as }}"
+    peer_ip: "{{ item.peer_ip }}"
+    peer_auth_type: "{{ item.peer_auth_type }}"
+    state: "{{ item.state | default(omit) }}"
+  with_items: "{{ os_networks_bgp_peers }}"

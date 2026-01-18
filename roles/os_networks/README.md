@@ -88,7 +88,7 @@ dict containing the following items:
   internal interface.
 - `network`: Unique name or ID of the external gateway network.
 - `external_fixed_ips`: Optional list of IP address parameters for the
-  external gateway network. Each is a dictionary with the subnet name or 
+  external gateway network. Each is a dictionary with the subnet name or
   subnet ID and the IP address to assign on the subnet.
 - `project`: Optionally create this router for a project other than the
   authenticating project.
@@ -126,6 +126,21 @@ following items:
   in the designated way.
 
 *NOTE*: RBAC assignments cannot be modified after they are created.
+
+`os_networks_address_scopes`: List of address scopes to create.
+Each item should be a dict containing the following items:
+- `name`: Name of the address scope.
+- `shared`: Whether the address scope is shared.
+- `ip_version`: Optional IP version of the address scope.
+- `state`: Optional state of the address scope, default is `present`.
+
+`os_networks_subnet_pools`: List of subnet pools to create.
+Each item should be a dict containing the following items:
+- `name`: Name of the subnet pool.
+- `shared`: Whether the subnet pool is shared.
+- `address_scope`: Optional address scope of the subnet pool.
+- `prefixes`: List of prefixes of the subnet pool.
+- `state`: Optional state of the subnet pool, default is `present`.
 
 Dependencies
 ------------

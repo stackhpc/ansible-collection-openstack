@@ -1,0 +1,12 @@
+---
+
+- name: Get manila access info
+  os_manila_share:
+    name: "{{ item.share_name }}"
+    user: "{{ item.share_user }}"
+  register: os_manila_mount_share_info
+  loop: "{{ os_manila_mount_shares }}"
+  no_log: "{{ no_log | default(true) }}"
+  delegate_to: "{{ os_manila_share_lookup_host }}"
+  run_once: "{{ os_manila_share_lookup_once | bool }}"
+  become: false

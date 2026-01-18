@@ -1,0 +1,16 @@
+- name: Get distribution facts
+  setup:
+    gather_subset:
+      - distribution
+
+- name: Install Ceph rpm key
+  rpm_key:
+    key: "{{ os_manila_mount_ceph_rpm_key }}"
+
+- name: Install Ceph release repo
+  dnf:
+    name: "{{ os_manila_mount_ceph_release_repo }}"
+
+- name: Install Ceph packages
+  dnf:
+    name: ceph-common

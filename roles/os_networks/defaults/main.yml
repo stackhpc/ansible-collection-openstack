@@ -120,6 +120,5 @@ os_networks_address_scopes: []
 # - `state`: Optional state of the subnet pool, default is `present`.
 os_networks_subnet_pools: []
 
-
 # Upper constraints file for installation of Python dependencies.
 os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/2025.1

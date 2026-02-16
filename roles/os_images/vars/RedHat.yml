@@ -1,7 +1,7 @@
 ---
 # List of package dependencies.
 os_images_package_dependencies:
-  - debootstrap
+  - "{% if os_images_install_epel_repo | bool %}debootstrap{% endif %}"
   - dosfstools
   - gdisk
   - "{% if os_images_git_elements | length > 0 %}git{% endif %}"

@@ -55,7 +55,10 @@
   # Using --reset means that we always change something
   changed_when: true
   become: true
-  when: os_images_list |
-        selectattr("architecture", "defined") |
-        rejectattr("architecture", "equalto", ansible_facts.architecture) |
-        length > 0
+  when:
+    - os_images_build | bool
+    - os_images_list |
+      selectattr("elements", "defined") |
+      selectattr("architecture", "defined") |
+      rejectattr("architecture", "equalto", ansible_facts.architecture) |
+      list | length > 0

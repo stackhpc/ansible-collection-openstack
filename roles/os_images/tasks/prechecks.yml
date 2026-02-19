@@ -6,6 +6,9 @@
   changed_when: false
   ignore_errors: true
   register: result
+  when:
+    - os_images_build | bool
+    - os_images_list | selectattr('elements', 'defined') | list | length > 0
 
 - name: Display warning message about the container engine
   ansible.builtin.assert:
@@ -14,3 +17,6 @@
     fail_msg: >
       Container runtime engine could not be found - make sure it is installed.
       Elements that depend on it will likely fail when building.
+  when:
+    - os_images_build | bool
+    - os_images_list | selectattr('elements', 'defined') | list | length > 0

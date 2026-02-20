@@ -101,3 +101,7 @@ os_images_hide: false
 
 # Visibility of images ('public' requires admin rights.)
 os_images_visibility: "{{ 'public' if os_images_public | bool else 'private' }}"
+
+# Whether or not to install debootstrap on Linux distributions in the RedHat family.
+# This allows you to build Debian based images on RedHat hosts. Requires EPEL.
+os_images_rhel_debootstrap_enabled: "{{ os_images_install_epel_repo }}"

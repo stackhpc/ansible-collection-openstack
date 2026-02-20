@@ -1,8 +1,9 @@
 ---
-# Here a quick check for the presence of Docker (or an alias for Podman)
-# Display a warning if not found
+# Check for the presence of Docker or Podman as this is
+# required for building container based images.
+# Error out if not found.
 - name: Check if container engine is installed
-  ansible.builtin.command: which docker
+  ansible.builtin.shell: which docker || which podman
   changed_when: false
   ignore_errors: true
   register: result

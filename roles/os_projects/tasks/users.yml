@@ -11,8 +11,11 @@
     description: "{{ item.description | default(omit) }}"
     email: "{{ item.email | default(omit) }}"
     password: "{{ item.password | default(omit) }}"
-    default_project: "{{ project.name }}"
-    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    # NOTE(bbezak): identity_user looks up default_project in the user domain
+    # ('domain'). Omit default_project for cross-domain users to avoid false
+    # "No Project found" errors.
+    default_project: "{{ (user_domain_id == project_domain_id) | ternary(project.name, omit) }}"
+    domain: "{{ user_domain_id }}"
     state: present
     enabled: true
     wait: true
@@ -20,7 +23,8 @@
   when: item.create_user | default(true) | bool
   environment: "{{ os_projects_environment }}"
   vars:
-    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+    user_domain_id: "{{ (project.user_domain in os_projects_domain_to_id.values()) | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    project_domain_id: "{{ (project.project_domain in os_projects_domain_to_id.values()) | ternary(project.project_domain, os_projects_domain_to_id[project.project_domain]) }}"
   loop_control:
     label: "{{ project.name }}: {{ item.name }}"
 

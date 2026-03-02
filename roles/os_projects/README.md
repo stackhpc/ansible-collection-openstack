@@ -62,6 +62,11 @@ Each item should be a dict containing the following items:
   - `public_key_file`: Path to the SSH public key on the control host.
 - `quotas`: Optional dict mapping quota names to their values.
 
+Note: when `user_domain` and `project_domain` differ, the role omits
+`default_project` during user creation to avoid false "No Project found"
+errors from `openstack.cloud.identity_user`. Cross-domain role assignments are
+still applied.
+
 `os_projects_upper_constraints_file` is a path to an upper constraints file which
 is passed through to the role dependencies.
 

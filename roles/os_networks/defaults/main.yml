@@ -101,5 +101,25 @@ os_networks_security_groups: []
 #   in the designated way.
 os_networks_rbac: []
 
+# List of BGP speakers to create.
+# Each item should be a dict containing the following items:
+# - `name`: Name of the BGP speaker.
+# - `local_as`: Local autonomous system number (ASN) for the BGP Speaker.
+# - `ip_version`: Optional IP version for BGP speaker.
+# - `advertise_floating_ip_host_routes`: Whether to advertise fip host routes.
+# - `advertise_tenant_networks`: Whether to advertise tenant networks.
+# - `state`: Optional state of the BGP speaker, default is `present`.
+os_networks_bgp_speakers: []
+
+# List of BGP peers to create.
+# Each item should be a dict containing the following items:
+# - `name`: Name that has to be given to the BGP Peer.
+# - `peer_ip`: IP address of the BGP peer.
+# - `remote_as`: Remote autonomous system number (ASN) for the BGP Peer.
+# - `peer_auth_type`: Authentication type, choices: ['none', 'md5'].
+# - `password`: Authentication password for the BGP peer when peer_auth_type set.
+# - `state`: Optional state of the subnet pool, default is `present`.
+os_networks_bgp_peers: []
+
 # Upper constraints file for installation of Python dependencies.
 os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/2025.1

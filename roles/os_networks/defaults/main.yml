@@ -53,6 +53,8 @@ os_networks_interface:
 #     - 'ipv6_ra_mode': Optional IPv6 router advertisement mode for the subnet.
 #     - 'use_default_subnetpool': Optional boolean, whether to use the default
 #       subnet pool.
+#     - 'subnet_pool': Subnet pool name or ID from which to obtain a CIDR.
+#     - 'prefix_length': Prefix length for subnet allocation from the pool.
 #     - 'project': Optional project in which to register the subnet.
 #     - 'state': Optional state of the subnet, default is 'present'.
 os_networks: []  # noqa var-naming[no-role-prefix]
@@ -100,6 +102,23 @@ os_networks_security_groups: []
 # - `projects`: A list of project names for sharing the named network
 #   in the designated way.
 os_networks_rbac: []
+
+# List of address scopes to create.
+# Each item should be a dict containing the following items:
+# - `name`: Name of the address scope.
+# - `shared`: Whether the address scope is shared.
+# - `ip_version`: Optional IP version of the address scope.
+# - `state`: Optional state of the address scope, default is `present`.
+os_networks_address_scopes: []
+
+# List of subnet pools to create.
+# Each item should be a dict containing the following items:
+# - `name`: Name of the subnet pool.
+# - `shared`: Whether the subnet pool is shared.
+# - `address_scope`: Optional address scope of the subnet pool.
+# - `prefixes`: List of prefixes of the subnet pool.
+# - `state`: Optional state of the subnet pool, default is `present`.
+os_networks_subnet_pools: []
 
 # Upper constraints file for installation of Python dependencies.
 os_networks_upper_constraints_file: https://releases.openstack.org/constraints/upper/2025.1

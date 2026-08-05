@@ -7,3 +7,9 @@
   ansible.builtin.import_tasks: projects.yml
   vars:
     ansible_python_interpreter: "{{ os_projects_venv ~ '/bin/python' if os_projects_venv != None else old_ansible_python_interpreter }}"
+
+- name: Include groups.yml
+  ansible.builtin.include_tasks: groups.yml
+  with_items: "{{ os_projects_groups }}"
+  loop_control:
+    loop_var: group

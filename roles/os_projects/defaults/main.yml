@@ -28,7 +28,6 @@ os_projects_domains: []
 # - 'users': Optional list of users to add to the group. Each user should be a
 #   dict containing following items:
 #   - 'name': The name of the user.
-#   - 'domain': The domain where user is registered.
 os_projects_groups: []
 # List of OpenStack users to create.
 # Each item should be a dict containing the following items:

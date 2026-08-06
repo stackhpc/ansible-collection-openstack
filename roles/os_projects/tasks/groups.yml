@@ -16,30 +16,8 @@
   environment: "{{ os_projects_environment }}"
   vars:
     group_domain_id: "{{ (group.domain in os_projects_domain_to_id.values()) | ternary(group.domain, os_projects_domain_to_id[group.domain]) }}"
-
-- name: Ensure group users exist
-  openstack.cloud.identity_user:
-    auth_type: "{{ os_projects_auth_type }}"
-    auth: "{{ os_projects_admin_auth }}"
-    region_name: "{{ os_projects_region | default(omit) }}"
-    cacert: "{{ os_projects_cacert | default(omit) }}"
-    cloud: "{{ os_projects_cloud | default(omit) }}"
-    interface: "{{ os_projects_interface | default(omit, true) }}"
-    name: "{{ item.name }}"
-    description: "{{ item.description | default(omit) }}"
-    email: "{{ item.email | default(omit) }}"
-    password: "{{ item.password | default(omit) }}"
-    domain: "{{ user_domain_id }}"
-    state: present
-    enabled: true
-    wait: true
-  with_items: "{{ group.users }}"
-  when: item.create_user | default(true) | bool
-  environment: "{{ os_projects_environment }}"
-  vars:
-    user_domain_id: "{{ (item.domain in os_projects_domain_to_id.values()) | ternary(item.domain, os_projects_domain_to_id[item.domain]) }}"
   loop_control:
-    label: "{{ group.name }}: {{ item.name }}"
+    label: "{{ group.name }}"
 
 - name: Ensure users are added to the group
   openstack.cloud.group_assignment:
@@ -54,9 +32,6 @@
     state: present
     wait: true
   with_items: "{{ group.users }}"
-  when: item.create_user | default(true) | bool
   environment: "{{ os_projects_environment }}"
-  vars:
-    user_domain_id: "{{ (item.domain in os_projects_domain_to_id.values()) | ternary(item.domain, os_projects_domain_to_id[item.domain]) }}"
   loop_control:
     label: "{{ group.name }}: {{ item.name }}"

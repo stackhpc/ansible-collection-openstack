@@ -33,3 +33,4 @@
     external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
     project: "{{ item.project | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
+    tags: "{{ item.tags | default(omit) }}"

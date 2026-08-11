@@ -51,6 +51,7 @@ dict containing the following items:
   Boolean, true to enable, false otherwise. Requires ansible >= 2.8.
 - `dns_domain`: The DNS domain value to set. Network will use Openstack
   defaults if this option is not provided. Requires ansible >= 2.9.
+- `tags`: Optional list of tags to set on the network.
 - `subnets`: A list of subnets to create in this network. Each item should
    be a dict containing the following items:
    - `name`: Name of the neutron subnet.
@@ -79,6 +80,7 @@ dict containing the following items:
    - `project`: Optionally create this subnet for a project other than the
      authenticating project.
    - `state`: Optional state of the subnet, default is `present`.
+   - `tags`: Optional list of tags to set on the subnet.
 
 `os_networks_routers` is a list of routers to create. Each item should be a
 dict containing the following items:
@@ -93,6 +95,7 @@ dict containing the following items:
 - `project`: Optionally create this router for a project other than the
   authenticating project.
 - `state`: Optional state of the router, default is `present`.
+- `tags`: Optional list of tags to set on the router.
 
 
 `os_networks_security_groups`: List of security groups to create.

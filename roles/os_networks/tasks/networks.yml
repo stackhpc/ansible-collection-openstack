@@ -32,6 +32,7 @@
     mtu: "{{ item.mtu | default(omit) }}"
     dns_domain: "{{ item.dns_domain | default(omit) }}"
     port_security_enabled: "{{ item.port_security_enabled | default(omit) }}"
+    tags: "{{ item.tags | default(omit) }}"
   with_items: "{{ os_networks }}"
 
 - name: Ensure subnet is registered with neutron
@@ -65,6 +66,7 @@
          default(item.1.subnetpool | default(omit)) }}
     project: "{{ item.1.project | default(omit) }}"
     state: "{{ item.1.state | default(omit) }}"
+    tags: "{{ item.1.tags | default(omit) }}"
   with_subelements:
     - "{{ os_networks }}"
     - subnets
@@ -87,6 +89,7 @@
 #     external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
 #     project: "{{ item.project | default(omit) }}"
 #     state: "{{ item.state | default(omit) }}"
+#     tags: "{{ item.tags | default(omit) }}"
 #   loop: "{{ os_networks_routers }}"
 #   when: item.state | default('present') == 'present'
 

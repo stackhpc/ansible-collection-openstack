@@ -17,6 +17,28 @@ os_projects_environment:
 # - 'name': The name of the domain.
 # - 'description': Optional description for the domain.
 os_projects_domains: []
+# List of OpenStack groups to create.
+# Each item should be a dict containing the following items:
+# - 'name': The name of the group.
+# - 'domain': The domain to contain the new group.
+# - 'description': Optional description for the group.
+# - 'create_group': Optional Bookean (Default: true) to indicate whether to
+#   create the group. This can be useful if the group already exists.
+#   (e.g. LDAP defined groups)
+# - 'users': Optional list of users to add to the group. Each user should be a
+#   dict containing following items:
+#   - 'name': The name of the user.
+os_projects_groups: []
+# List of OpenStack users to create.
+# Each item should be a dict containing the following items:
+# - 'name': The name of the user.
+# - 'password': The user's password.
+# - 'domain': The domain in which to register users.
+# - 'openrc_file': Optional path to an environment file to create.
+# - 'create_user': Optional boolean (Default: true) to indicate whether to
+#   create the user. This can be useful if the user already exists.
+# (e.g. LDAP defined users)
+os_projects_users: []
 # List of OpenStack projects to create.
 # Each item should be a dict containing the following items:
 # - 'name': The name of the project.
@@ -26,11 +48,14 @@ os_projects_domains: []
 # - 'users': Optional list of users to register. Each user should be a dict
 #   containing the following items:
 #   - 'name': The name of the user.
-#   - 'password': The user's password.
 #   - 'roles': Optional list of roles to assign to the user in the project.
 #   - 'domain_roles': Optional list of roles to assign to the user in the user
 #     domain.
-#   - 'openrc_file': Optional path to an environment file to create.
+# - 'groups': Optional list of groups to register. Each group should be a dict
+#   containing the following items:
+#   - 'name': The name of the group.
+#   - 'domain': The domain to contain the new group.
+#   - 'roles': Optional list of roles to assign to the group in the project.
 # - 'keypairs': Optional list of SSH key pairs to register with Nova. Each key
 #   pair should be a dict containing the following items:
 #   - 'name': The name of the keypair.

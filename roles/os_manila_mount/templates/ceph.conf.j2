@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+{% for share in os_manila_mount_share_info.results %}
+[client.{{ share.item.share_user }}]
+mon_host = {{ share.host }}
+{% endfor %}

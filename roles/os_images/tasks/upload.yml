@@ -1,4 +1,27 @@
 ---
+- name: Gather existing cloud tenant images
+  openstack.cloud.image_info:
+    auth_type: "{{ os_images_auth_type }}"
+    auth: "{{ os_images_auth }}"
+    cacert: "{{ os_images_cacert | default(omit) }}"
+    interface: "{{ os_images_interface | default(omit, true) }}"
+    region_name: "{{ os_images_region | default(omit) }}"
+  register: existing_images
+
+- name: Unprotect existing cloud tenant kernel
+  ansible.builtin.command: >-
+    {{ os_images_venv ~ '/bin/openstack' if os_images_venv else 'openstack' }}
+    image set --unprotected {{ item.name ~ '-kernel' }}
+  with_items: "{{ os_images_list | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.elements is defined
+    - '"baremetal" in item.elements'
+    - item.force_rebuild | default(os_images_force_rebuild) | bool
+    - item.name ~ '-kernel' in existing_images.images | map(attribute='name') | list
+  changed_when: true
+
 - name: Ensure existing cloud tenant kernel does not exist
   openstack.cloud.image:
     auth_type: "{{ os_images_auth_type }}"
@@ -30,6 +53,7 @@
     container_format: aki
     disk_format: aki
     filename: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.vmlinuz"
+    protected: "{{ item.protected | default(omit) }}"
   with_items: "{{ os_images_list | list }}"
   vars:
     visibility: "{{ item.visibility | default(item.is_public | ternary('public', 'private') if item.is_public is defined else os_images_visibility) }}"
@@ -39,6 +63,20 @@
     - item.elements is defined
     - '"baremetal" in item.elements'
   register: kernel_result
+
+- name: Unprotect existing cloud tenant ramdisk
+  ansible.builtin.command: >-
+    {{ os_images_venv ~ '/bin/openstack' if os_images_venv else 'openstack' }}
+    image set --unprotected {{ item.name ~ '-ramdisk' }}
+  with_items: "{{ os_images_list | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.elements is defined
+    - '"baremetal" in item.elements'
+    - item.force_rebuild | default(os_images_force_rebuild) | bool
+    - item.name ~ '-ramdisk' in existing_images.images | map(attribute='name') | list
+  changed_when: true
 
 - name: Ensure existing cloud tenant ramdisk does not exist
   openstack.cloud.image:
@@ -71,6 +109,7 @@
     container_format: ari
     disk_format: ari
     filename: "{{ os_images_cache }}/{{ item.name }}/{{ item.name }}.initrd"
+    protected: "{{ item.protected | default(omit) }}"
   with_items: "{{ os_images_list | list }}"
   vars:
     visibility: "{{ item.visibility | default(item.is_public | ternary('public', 'private') if item.is_public is defined else os_images_visibility) }}"
@@ -80,6 +119,18 @@
     - item.elements is defined
     - '"baremetal" in item.elements'
   register: ramdisk_result
+
+- name: Unprotect existing cloud tenant image
+  ansible.builtin.command: >-
+    {{ os_images_venv ~ '/bin/openstack' if os_images_venv else 'openstack' }}
+    image set --unprotected {{ item.name }}
+  with_items: "{{ os_images_list | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.force_rebuild | default(os_images_force_rebuild) | bool
+    - item.name in existing_images.images | map(attribute='name') | list
+  changed_when: true
 
 - name: Ensure existing cloud tenant image does not exist
   openstack.cloud.image:
@@ -114,6 +165,7 @@
     kernel: "{{ item.1.id if is_baremetal else omit }}"
     ramdisk: "{{ item.2.id if is_baremetal else omit }}"
     use_import: "{{ item.0.use_import | default(omit) }}"
+    protected: "{{ item.0.protected | default(omit) }}"
   vars:
     # NOTE(m-anson): When architecture isn't defined for an
     # image, assume that we should set cpu_arch: x86_64 as

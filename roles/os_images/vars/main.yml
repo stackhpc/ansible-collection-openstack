@@ -1,0 +1,15 @@
+---
+os_images_connection_env: >-
+  {{
+    dict(
+      (os_images_auth | default({}, true)).keys() | list
+      | map('regex_replace', '^', 'OS_')
+      | map('upper')
+      | list
+      | zip((os_images_auth | default({}, true)).values() | list)
+    )
+    | combine({'OS_AUTH_TYPE': os_images_auth_type} if os_images_auth_type | default('', true) else {})
+    | combine({'OS_CACERT': os_images_cacert} if os_images_cacert | default('', true) else {})
+    | combine({'OS_INTERFACE': os_images_interface} if os_images_interface | default('', true) else {})
+    | combine({'OS_REGION_NAME': os_images_region} if os_images_region | default('', true) else {})
+  }}

@@ -85,6 +85,8 @@ mutually exclusive where each contain:
 * `use_import`: (optional) Whether to use an import workflow instead of direct upload.
   Useful in conjuction with an [interoperable image import](https://docs.openstack.org/glance/latest/admin/interoperable-image-import.html).
   Defaults to 'false'.
+* `protected`: (optional) Whether the uploaded image should be protected from deletion.
+  Existing protected images are automatically unprotected before a forced rebuild.
 
 `os_images_common`: A set of elements to include in every image listed.
 Defaults to `cloud-init enable-serial-console stable-interface-names`.

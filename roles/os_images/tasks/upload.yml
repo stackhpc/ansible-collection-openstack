@@ -7,6 +7,7 @@
     interface: "{{ os_images_interface | default(omit, true) }}"
     region_name: "{{ os_images_region | default(omit) }}"
   register: existing_images
+  tags: always
 
 - name: Unprotect existing cloud tenant kernel
   ansible.builtin.command: >-
@@ -21,6 +22,7 @@
     - item.force_rebuild | default(os_images_force_rebuild) | bool
     - item.name ~ '-kernel' in existing_images.images | map(attribute='name') | list
   changed_when: true
+  tags: clean
 
 - name: Ensure existing cloud tenant kernel does not exist
   openstack.cloud.image:
@@ -77,6 +79,7 @@
     - item.force_rebuild | default(os_images_force_rebuild) | bool
     - item.name ~ '-ramdisk' in existing_images.images | map(attribute='name') | list
   changed_when: true
+  tags: clean
 
 - name: Ensure existing cloud tenant ramdisk does not exist
   openstack.cloud.image:
@@ -131,6 +134,7 @@
     - item.force_rebuild | default(os_images_force_rebuild) | bool
     - item.name in existing_images.images | map(attribute='name') | list
   changed_when: true
+  tags: clean
 
 - name: Ensure existing cloud tenant image does not exist
   openstack.cloud.image:

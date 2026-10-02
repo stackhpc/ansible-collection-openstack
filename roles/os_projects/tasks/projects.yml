@@ -139,8 +139,20 @@
 
 - name: Include users.yml
   ansible.builtin.include_tasks: users.yml
+  with_items: "{{ os_projects_users }}"
+  loop_control:
+    loop_var: user
+
+- name: Include groups.yml
+  ansible.builtin.include_tasks: groups.yml
+  with_items: "{{ os_projects_groups }}"
+  loop_control:
+    loop_var: group
+
+- name: Include role_assignment.yml
+  ansible.builtin.include_tasks: role_assignment.yml
   with_items: "{{ os_projects }}"
-  when: project.users is defined
+  when: project.users is defined or project.groups is defined
   loop_control:
     loop_var: project
 

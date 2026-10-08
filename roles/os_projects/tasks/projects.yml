@@ -137,17 +137,27 @@
          list }}
     all_roles: "{{ project_roles + domain_roles }}"
 
-- name: Include users.yml
-  ansible.builtin.include_tasks: users.yml
-  with_items: "{{ os_projects_users }}"
-  loop_control:
-    loop_var: user
-
 - name: Include groups.yml
   ansible.builtin.include_tasks: groups.yml
   with_items: "{{ os_projects_groups }}"
   loop_control:
     loop_var: group
+
+# Adding and assign roles to users defined in projects for backward compatibility
+- name: Include project_users.yml
+  ansible.builtin.include_tasks: project_users.yml
+  with_items: "{{ os_projects }}"
+  when:
+    - project.users is defined
+    - project.user_domain is defined
+  loop_control:
+    loop_var: project
+
+- name: Include users.yml
+  ansible.builtin.include_tasks: users.yml
+  with_items: "{{ os_projects_users }}"
+  loop_control:
+    loop_var: user
 
 - name: Include role_assignment.yml
   ansible.builtin.include_tasks: role_assignment.yml

@@ -20,6 +20,7 @@
   environment: "{{ os_projects_environment }}"
   loop_control:
     label: "{{ project.name }}: {{ item.0.name }}: {{ item.1 }}"
+  when: project.users is defined
 
 - name: Ensure users have required domain roles
   openstack.cloud.role_assignment:
@@ -39,9 +40,10 @@
     - skip_missing: true
   environment: "{{ os_projects_environment }}"
   vars:
-    domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
+    domain_is_id: "{{ item.domain in os_projects_domain_to_id.values() }}"
   loop_control:
-    label: "{{ project.user_domain }}: {{ item.0.name }}: {{ item.1 }}"
+    label: "{{ item.domain }}: {{ item.0.name }}: {{ item.1 }}"
+  when: project.users is defined
 
 - name: Ensure groups have required project roles
   openstack.cloud.role_assignment:
@@ -63,3 +65,27 @@
   environment: "{{ os_projects_environment }}"
   loop_control:
     label: "{{ project.name }}: {{ item.0.name }}: {{ item.1 }}"
+  when: project.groups is defined
+
+- name: Ensure groups have required domain roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ item.0.name }}"
+    domain: "{{ domain_is_id | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.groups }}"
+    - domain_roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ item.domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label: "{{ item.domain }}: {{ item.0.name }}: {{ item.1 }}"
+  when: project.groups is defined

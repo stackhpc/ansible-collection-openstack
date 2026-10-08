@@ -1,5 +1,5 @@
 ---
-- name: Ensure users exist
+- name: "Ensure users exist: {{ user.name }}"
   openstack.cloud.identity_user:
     auth_type: "{{ os_projects_auth_type }}"
     auth: "{{ os_projects_admin_auth }}"
@@ -19,5 +19,21 @@
   environment: "{{ os_projects_environment }}"
   vars:
     user_domain_id: "{{ (user.domain in os_projects_domain_to_id.values()) | ternary(user.domain, os_projects_domain_to_id[user.domain]) }}"
+
+- name: Ensure users are added to the group
+  openstack.cloud.group_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ user.name }}"
+    group: "{{ item.name }}"
+    state: present
+    wait: true
+  with_items: "{{ user.groups }}"
+  environment: "{{ os_projects_environment }}"
   loop_control:
-    label: "{{ user.name }}"
+    label: "{{ user.name }}: {{ item.name }}"
+  when: user.groups is defined

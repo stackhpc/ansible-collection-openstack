@@ -12,6 +12,7 @@
     email: "{{ user.email | default(omit) }}"
     password: "{{ user.password | default(omit) }}"
     domain: "{{ user_domain_id }}"
+    default_project: "{{ user.default_project }}"
     state: present
     enabled: true
     wait: true

@@ -31,6 +31,9 @@ os_projects_groups: []
 # - 'name': The name of the user.
 # - 'password': The user's password.
 # - 'domain': The domain in which to register users.
+# - 'default_project': Optional name of the default project of the user.
+#   This project must exists or defined at ``os_projects``.
+#   The project must be in the same domain as the user.
 # - 'groups': Optional list of groups of users. Each group should be a
 #   dict containing the following items:
 #   - 'name': The name of the group.

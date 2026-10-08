@@ -1,0 +1,18 @@
+---
+- name: "Ensure the groups exist: {{ group.name }}"
+  openstack.cloud.identity_group:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ group.name }}"
+    description: "{{ group.description }}"
+    domain_id: "{{ group_domain_id }}"
+    state: present
+    wait: true
+  when: group.create_group | default(true) | bool
+  environment: "{{ os_projects_environment }}"
+  vars:
+    group_domain_id: "{{ (group.domain in os_projects_domain_to_id.values()) | ternary(group.domain, os_projects_domain_to_id[group.domain]) }}"

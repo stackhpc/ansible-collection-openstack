@@ -121,6 +121,12 @@
          map(attribute='users') |
          sum(start=[]) |
          list }}
+    os_groups: >
+      {{ os_projects |
+         selectattr('groups', 'defined') |
+         map(attribute='groups') |
+         sum(start=[]) |
+         list }}
     project_roles: >
       {{ users |
          selectattr('roles', 'defined') |
@@ -135,7 +141,28 @@
          sum(start=[]) |
          unique |
          list }}
-    all_roles: "{{ project_roles + domain_roles }}"
+    group_project_roles: >
+      {{ os_groups |
+         selectattr('roles', 'defined') |
+         map(attribute='roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    group_domain_roles: >
+      {{ os_groups |
+         selectattr('domain_roles', 'defined') |
+         map(attribute='domain_roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    all_roles: "{{ project_roles + domain_roles + group_project_roles + group_domain_roles }}"
+
+- name: Include groups.yml
+  ansible.builtin.include_tasks: groups.yml
+  with_items: "{{ os_projects }}"
+  when: project.groups is defined
+  loop_control:
+    loop_var: project
 
 - name: Include users.yml
   ansible.builtin.include_tasks: users.yml
@@ -236,3 +263,9 @@
   loop_control:
     label: "{{ item.0.name }}: {{ item.1.name }}"
   delegate_to: localhost
+
+- name: Ensure openrc environment file exists for group users
+  ansible.builtin.include_tasks: group-user-openrc.yml
+  with_items: "{{ os_projects }}"
+  loop_control:
+    loop_var: project

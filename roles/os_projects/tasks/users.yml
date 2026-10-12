@@ -71,3 +71,60 @@
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
   loop_control:
     label: "{{ project.user_domain }}: {{ item.0.name }}: {{ item.1 }}"
+
+- name: Ensure group users exist
+  openstack.cloud.identity_user:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.1.name }}"
+    description: "{{ item.1.description | default(omit) }}"
+    email: "{{ item.1.email | default(omit) }}"
+    password: "{{ item.1.password | default(omit) }}"
+    # NOTE(bbezak): identity_user looks up default_project in the user domain
+    # ('domain'). Omit default_project for cross-domain users to avoid false
+    # "No Project found" errors.
+    default_project: "{{ (user_domain_id == project_domain_id) | ternary(project.name, omit) }}"
+    domain: "{{ user_domain_id }}"
+    state: present
+    enabled: true
+    wait: true
+  with_subelements:
+    - "{{ project.groups }}"
+    - users
+    - skip_missing: true
+  when:
+    - project.groups is defined
+    - item.1.create_user | default(true) | bool
+  environment: "{{ os_projects_environment }}"
+  vars:
+    user_domain_id: "{{ (project.user_domain in os_projects_domain_to_id.values()) | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    project_domain_id: "{{ (project.project_domain in os_projects_domain_to_id.values()) | ternary(project.project_domain, os_projects_domain_to_id[project.project_domain]) }}"
+  loop_control:
+    label: "{{ item.0.name }}: {{ item.1.name }}"
+
+- name: Ensure users are added to the group
+  openstack.cloud.group_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    user: "{{ item.1.name }}"
+    group: "{{ item.0.name }}"
+    state: present
+    wait: true
+  with_subelements:
+    - "{{ project.groups }}"
+    - users
+    - skip_missing: true
+  when: project.groups is defined
+  environment: "{{ os_projects_environment }}"
+  vars:
+    user_domain_id: "{{ (project.user_domain in os_projects_domain_to_id.values()) | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+  loop_control:
+    label: "{{ item.0.name }}: {{ item.1.name }}"

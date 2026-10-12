@@ -1,0 +1,65 @@
+---
+- name: Ensure the groups exist
+  openstack.cloud.identity_group:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    domain_id: "{{ group_domain_id }}"
+    state: present
+    wait: true
+  with_items: "{{ project.groups }}"
+  when: item.create_group | default(true) | bool
+  environment: "{{ os_projects_environment }}"
+  vars:
+    group_domain_id: "{{ (item.domain in os_projects_domain_to_id.values()) | ternary(item.domain, os_projects_domain_to_id[item.domain]) }}"
+  loop_control:
+    label: "{{ project.name }}: {{ item.name }}"
+
+- name: Ensure groups have required project roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    group: "{{ item.0.name }}"
+    project: "{{ project.name }}"
+    role: "{{ item.1 }}"
+    group_domain: "{{ item.0.domain | default(omit, true) }}"
+    project_domain: "{{ project.project_domain | default(omit, true) }}"
+    state: present
+  with_subelements:
+    - "{{ project.groups }}"
+    - roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  loop_control:
+    label: "{{ project.name }}: {{ item.0.name }}: {{ item.1 }}"
+
+- name: Ensure groups have required domain roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    group: "{{ item.0.name }}"
+    domain: "{{ domain_is_id | ternary(item.0.domain, os_projects_domain_to_id[item.0.domain]) }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.groups }}"
+    - domain_roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ item.0.domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label: "{{ item.0.domain }}: {{ item.0.name }}: {{ item.1 }}"

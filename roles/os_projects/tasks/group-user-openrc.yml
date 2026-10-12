@@ -1,0 +1,16 @@
+---
+- name: Ensure openrc environment file exists for group users
+  ansible.builtin.template:
+    src: group-openrc.j2
+    dest: "{{ item.1.openrc_file }}"
+    mode: "0600"
+  with_subelements:
+    - "{{ project.groups }}"
+    - users
+    - skip_missing: true
+  when:
+    - project.groups is defined
+    - item.1.openrc_file is defined
+  loop_control:
+    label: "{{ project.name }}: {{ item.0.name }}: {{ item.1.name }}"
+  delegate_to: localhost

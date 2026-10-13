@@ -171,6 +171,13 @@
   loop_control:
     loop_var: project
 
+- name: Include group-users.yml
+  ansible.builtin.include_tasks: group-users.yml
+  with_items: "{{ os_projects }}"
+  when: project.groups is defined
+  loop_control:
+    loop_var: project
+
 - name: Ensure SSH keypairs are registered
   openstack.cloud.keypair:
     auth_type: "{{ os_projects_auth_type }}"

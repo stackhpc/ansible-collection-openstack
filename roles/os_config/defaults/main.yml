@@ -1,0 +1,14 @@
+---
+os_config_destination: /home/{{ ansible_facts.user }}/.config/openstack
+os_config_owner: "{{ ansible_facts.user }}"
+os_config_group: "{{ ansible_facts.user }}"
+os_config_content: |
+  ---
+  clouds:
+    myprivateclound:
+      auth:
+        auth_url: http://openstack.example.com:5000
+        project_name: p3
+        username: user
+        password: secretpassword
+      region: RegionOne

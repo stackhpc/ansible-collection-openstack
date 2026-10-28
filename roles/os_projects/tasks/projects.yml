@@ -69,6 +69,21 @@
   loop_control:
     label: "{{ item.name }}"
 
+- name: Fail if the group's domain was not found
+  ansible.builtin.fail:
+    msg: >
+      OpenStack domain {{ item.1.domain }} for group {{ item.1.name }}
+      was not found.
+  when:
+    - item.1.domain not in os_projects_domain_to_id
+    - item.1.domain not in os_projects_domain_to_id.values()
+  with_subelements:
+    - "{{ os_projects }}"
+    - groups
+    - skip_missing: true
+  loop_control:
+    label: "{{ item.1.name }}"
+
 - name: Fail if the project's user domain was not found
   ansible.builtin.fail:
     msg: >
@@ -156,6 +171,10 @@
          unique |
          list }}
     all_roles: "{{ project_roles + domain_roles + group_project_roles + group_domain_roles }}"
+
+- name: Initialise a fact mapping group names to IDs
+  ansible.builtin.set_fact:
+    os_projects_group_to_id: {}
 
 - name: Include groups.yml
   ansible.builtin.include_tasks: groups.yml

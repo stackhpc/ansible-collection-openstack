@@ -33,6 +33,52 @@
   loop_control:
     label: "{{ item.0.name }}: {{ item.1.name }}"
 
+# This task is to ensure we don't miss users that have ``creaet_user`` set to false
+- name: Look up users
+  openstack.cloud.identity_user_info:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    domain: "{{ user_domain_id }}"
+    name: "{{ item.1.name }}"
+  with_subelements:
+    - "{{ project.groups }}"
+    - users
+    - skip_missing: true
+  when:
+    - project.groups is defined
+  environment: "{{ os_projects_environment }}"
+  vars:
+    user_domain_id: "{{ (project.user_domain in os_projects_domain_to_id.values()) | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    project_domain_id: "{{ (project.project_domain in os_projects_domain_to_id.values()) | ternary(project.project_domain, os_projects_domain_to_id[project.project_domain]) }}"
+  loop_control:
+    label: "{{ item.0.name }}: {{ item.1.name }}"
+    index_var: idx
+  register: os_projects_fetched_users
+
+- name: Debug os_projects_fetched_users
+  ansible.builtin.debug:
+    var: os_projects_fetched_users
+
+- name: Assert that all users exist
+  ansible.builtin.assert:
+    that:
+      - os_projects_fetched_users.results[idx].users is defined
+      - os_projects_fetched_users.results[idx].users | length > 0
+    fail_msg: "The user '{{ item.1.name }}' does not exist in the '{{ project.user_domain }}' domain"
+  with_subelements:
+    - "{{ project.groups }}"
+    - users
+    - skip_missing: true
+  when:
+    - project.groups is defined
+  loop_control:
+    label: "{{ item.0.name }}: {{ item.1.name }}"
+    index_var: idx
+
 - name: Ensure users are added to the group
   openstack.cloud.group_assignment:
     auth_type: "{{ os_projects_auth_type }}"
@@ -41,8 +87,8 @@
     cacert: "{{ os_projects_cacert | default(omit) }}"
     cloud: "{{ os_projects_cloud | default(omit) }}"
     interface: "{{ os_projects_interface | default(omit, true) }}"
-    user: "{{ item.1.name }}"
-    group: "{{ item.0.name }}"
+    user: "{{ user_id }}"
+    group: "{{ group_id }}"
     state: present
     wait: true
   with_subelements:
@@ -52,6 +98,9 @@
   when: project.groups is defined
   environment: "{{ os_projects_environment }}"
   vars:
-    user_domain_id: "{{ (project.user_domain in os_projects_domain_to_id.values()) | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
+    user_id: "{{ os_projects_fetched_users.results[idx].users[0].id }}"
+    group_domain_id: "{{ (item.0.domain in os_projects_domain_to_id.values()) | ternary(item.0.domain, os_projects_domain_to_id[item.0.domain]) }}"
+    group_id: "{{ os_projects_group_to_id[group_domain_id][item.0.name] }}"
   loop_control:
     label: "{{ item.0.name }}: {{ item.1.name }}"
+    index_var: idx

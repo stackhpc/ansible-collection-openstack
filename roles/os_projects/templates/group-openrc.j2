@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+# This is an openrc environment file for OpenStack user {{ item.1.name }} in
+# project {{ project.name }}.
+{% set os_projects_user_auth_overrides = {
+  "project_domain_name": project.project_domain,
+  "user_domain_name": project.user_domain,
+  "project_name": project.name,
+  "username": item.1.name,
+  "password": item.1.password,
+} %}
+{% set os_projects_auth = os_projects_admin_auth | combine(os_projects_user_auth_overrides) %}
+{% for name, value in os_projects_auth.items() %}
+export OS_{{ name | upper }}={{ value | quote }}
+{% endfor %}
+{% for name, value in os_projects_environment.items() %}
+export {{ name }}={{ value | quote }}
+{% endfor %}

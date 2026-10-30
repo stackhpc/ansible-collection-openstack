@@ -69,6 +69,21 @@
   loop_control:
     label: "{{ item.name }}"
 
+- name: Fail if the group's domain was not found
+  ansible.builtin.fail:
+    msg: >
+      OpenStack domain {{ item.1.domain }} for group {{ item.1.name }}
+      was not found.
+  when:
+    - item.1.domain not in os_projects_domain_to_id
+    - item.1.domain not in os_projects_domain_to_id.values()
+  with_subelements:
+    - "{{ os_projects }}"
+    - groups
+    - skip_missing: true
+  loop_control:
+    label: "{{ item.1.name }}"
+
 - name: Fail if the project's user domain was not found
   ansible.builtin.fail:
     msg: >
@@ -121,6 +136,12 @@
          map(attribute='users') |
          sum(start=[]) |
          list }}
+    os_groups: >
+      {{ os_projects |
+         selectattr('groups', 'defined') |
+         map(attribute='groups') |
+         sum(start=[]) |
+         list }}
     project_roles: >
       {{ users |
          selectattr('roles', 'defined') |
@@ -135,7 +156,33 @@
          sum(start=[]) |
          unique |
          list }}
-    all_roles: "{{ project_roles + domain_roles }}"
+    group_project_roles: >
+      {{ os_groups |
+         selectattr('roles', 'defined') |
+         map(attribute='roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    group_domain_roles: >
+      {{ os_groups |
+         selectattr('domain_roles', 'defined') |
+         map(attribute='domain_roles') |
+         sum(start=[]) |
+         unique |
+         list }}
+    all_roles: "{{ project_roles + domain_roles + group_project_roles + group_domain_roles }}"
+
+- name: Initialise a fact mapping group names to IDs
+  ansible.builtin.set_fact:
+    os_projects_group_to_id: {}
+
+- name: Include groups.yml
+  ansible.builtin.include_tasks: groups.yml
+  with_items: "{{ os_projects }}"
+  when: project.groups is defined
+  loop_control:
+    loop_var: project
+    label: "{{ project.name }}"
 
 - name: Include users.yml
   ansible.builtin.include_tasks: users.yml
@@ -143,6 +190,15 @@
   when: project.users is defined
   loop_control:
     loop_var: project
+    label: "{{ project.name }}"
+
+- name: Include group-users.yml
+  ansible.builtin.include_tasks: group-users.yml
+  with_items: "{{ os_projects }}"
+  when: project.groups is defined
+  loop_control:
+    loop_var: project
+    label: "{{ project.name }}"
 
 - name: Ensure SSH keypairs are registered
   openstack.cloud.keypair:
@@ -236,3 +292,10 @@
   loop_control:
     label: "{{ item.0.name }}: {{ item.1.name }}"
   delegate_to: localhost
+
+- name: Ensure openrc environment file exists for group users
+  ansible.builtin.include_tasks: group-user-openrc.yml
+  with_items: "{{ os_projects }}"
+  loop_control:
+    loop_var: project
+    label: "{{ project.name }}"

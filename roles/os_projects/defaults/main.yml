@@ -37,7 +37,7 @@ os_projects_domains: []
 # - 'groups': Optional list of groups to register. Each group should be a dict
 #   containing the following items:
 #   - 'name': The name of the group.
-#   - 'description': Optional description for the domain.
+#   - 'description': Optional description for the group.
 #   - 'domain': The domain of the group.
 #   - 'roles': Optional list of roles to assign to the group in the project.
 #   - 'domain_roles': Optional list of roles to assign to the group in the

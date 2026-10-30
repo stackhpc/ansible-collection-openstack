@@ -42,6 +42,7 @@
 
 - name: Assert that all groups exist
   ansible.builtin.assert:
+    quiet: true
     that:
       - os_projects_fetched_groups.results[idx].groups is defined
       - os_projects_fetched_groups.results[idx].groups | length > 0

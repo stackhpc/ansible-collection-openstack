@@ -59,12 +59,9 @@
     index_var: idx
   register: os_projects_fetched_users
 
-- name: Debug os_projects_fetched_users
-  ansible.builtin.debug:
-    var: os_projects_fetched_users
-
 - name: Assert that all users exist
   ansible.builtin.assert:
+    quiet: true
     that:
       - os_projects_fetched_users.results[idx].users is defined
       - os_projects_fetched_users.results[idx].users | length > 0

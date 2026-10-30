@@ -182,6 +182,7 @@
   when: project.groups is defined
   loop_control:
     loop_var: project
+    label: "{{ project.name }}"
 
 - name: Include users.yml
   ansible.builtin.include_tasks: users.yml
@@ -189,6 +190,7 @@
   when: project.users is defined
   loop_control:
     loop_var: project
+    label: "{{ project.name }}"
 
 - name: Include group-users.yml
   ansible.builtin.include_tasks: group-users.yml
@@ -196,6 +198,7 @@
   when: project.groups is defined
   loop_control:
     loop_var: project
+    label: "{{ project.name }}"
 
 - name: Ensure SSH keypairs are registered
   openstack.cloud.keypair:
@@ -295,3 +298,4 @@
   with_items: "{{ os_projects }}"
   loop_control:
     loop_var: project
+    label: "{{ project.name }}"

@@ -1,0 +1,6 @@
+---
+- name: Test os_ironic_state
+  hosts: all
+  connection: local
+  roles:
+    - stackhpc.openstack.os_ironic_state

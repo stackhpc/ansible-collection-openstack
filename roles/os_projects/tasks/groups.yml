@@ -1,0 +1,108 @@
+---
+- name: Ensure the groups exist
+  openstack.cloud.identity_group:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    domain_id: "{{ group_domain_id }}"
+    state: present
+    wait: true
+  with_items: "{{ project.groups }}"
+  when: item.create_group | default(true) | bool
+  environment: "{{ os_projects_environment }}"
+  vars:
+    group_domain_id: "{{ (item.domain in os_projects_domain_to_id.values()) | ternary(item.domain, os_projects_domain_to_id[item.domain]) }}"
+  loop_control:
+    label: "{{ project.name }}: {{ item.name }}"
+
+# This task is to ensure we don't miss groups that have ``create_group`` set to false
+- name: Look up groups
+  openstack.cloud.identity_group_info:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    name: "{{ item.name }}"
+    domain: "{{ group_domain_id }}"
+  with_items: "{{ project.groups }}"
+  environment: "{{ os_projects_environment }}"
+  vars:
+    group_domain_id: "{{ (item.domain in os_projects_domain_to_id.values()) | ternary(item.domain, os_projects_domain_to_id[item.domain]) }}"
+  loop_control:
+    label: "{{ project.name }}: {{ item.name }}"
+    index_var: idx
+  register: os_projects_fetched_groups
+
+- name: Assert that all groups exist
+  ansible.builtin.assert:
+    quiet: true
+    that:
+      - os_projects_fetched_groups.results[idx].groups is defined
+      - os_projects_fetched_groups.results[idx].groups | length > 0
+    fail_msg: "The group '{{ item.name }}' does not exist in the '{{ item.domain }}' domain"
+  with_items: "{{ project.groups }}"
+  loop_control:
+    label: "{{ project.name }}: {{ item.name }}"
+    index_var: idx
+
+- name: Populate domain ID - group name - group ID mapping
+  ansible.builtin.set_fact:
+    os_projects_group_to_id: "{{ os_projects_group_to_id | combine(sub_map, recursive=true) }}"
+  with_items: "{{ project.groups }}"
+  vars:
+    group_domain_id: "{{ (item.domain in os_projects_domain_to_id.values()) | ternary(item.domain, os_projects_domain_to_id[item.domain]) }}"
+    sub_map: "{{ {group_domain_id: {item.name: os_projects_fetched_groups.results[idx].groups[0].id}} }}"
+  loop_control:
+    index_var: idx
+    label: "Domain: {{ item.domain }} - Group: {{ item.name }}"
+
+- name: Ensure groups have required project roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    group: "{{ item.0.name }}"
+    project: "{{ project.name }}"
+    role: "{{ item.1 }}"
+    group_domain: "{{ item.0.domain | default(omit, true) }}"
+    project_domain: "{{ project.project_domain | default(omit, true) }}"
+    state: present
+  with_subelements:
+    - "{{ project.groups }}"
+    - roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  loop_control:
+    label: "{{ project.name }}: {{ item.0.name }}: {{ item.1 }}"
+
+- name: Ensure groups have required domain roles
+  openstack.cloud.role_assignment:
+    auth_type: "{{ os_projects_auth_type }}"
+    auth: "{{ os_projects_admin_auth }}"
+    region_name: "{{ os_projects_region | default(omit) }}"
+    cacert: "{{ os_projects_cacert | default(omit) }}"
+    cloud: "{{ os_projects_cloud | default(omit) }}"
+    interface: "{{ os_projects_interface | default(omit, true) }}"
+    group: "{{ item.0.name }}"
+    domain: "{{ domain_is_id | ternary(item.0.domain, os_projects_domain_to_id[item.0.domain]) }}"
+    role: "{{ item.1 }}"
+    state: present
+  with_subelements:
+    - "{{ project.groups }}"
+    - domain_roles
+    - skip_missing: true
+  environment: "{{ os_projects_environment }}"
+  vars:
+    domain_is_id: "{{ item.0.domain in os_projects_domain_to_id.values() }}"
+  loop_control:
+    label: "{{ item.0.domain }}: {{ item.0.name }}: {{ item.1 }}"

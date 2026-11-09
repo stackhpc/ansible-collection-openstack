@@ -1,4 +1,10 @@
 ---
+- name: Set facts about users of the project
+  ansible.builtin.set_fact:
+    os_projects_project_all_users: "{{ project.users | default([]) + group_users }}"
+  vars:
+    group_users: "{{ project.groups | default([]) | map(attribute='users', default=[]) | flatten }}"
+
 - name: Ensure project users exist
   openstack.cloud.identity_user:
     auth_type: "{{ os_projects_auth_type }}"
@@ -19,7 +25,7 @@
     state: present
     enabled: true
     wait: true
-  with_items: "{{ project.users }}"
+  with_items: "{{ os_projects_project_all_users }}"
   when: item.create_user | default(true) | bool
   environment: "{{ os_projects_environment }}"
   vars:
@@ -43,7 +49,7 @@
     project_domain: "{{ project.project_domain | default(omit, true) }}"
     state: present
   with_subelements:
-    - "{{ project.users }}"
+    - "{{ os_projects_project_all_users }}"
     - roles
     - skip_missing: true
   environment: "{{ os_projects_environment }}"
@@ -63,7 +69,7 @@
     role: "{{ item.1 }}"
     state: present
   with_subelements:
-    - "{{ project.users }}"
+    - "{{ os_projects_project_all_users }}"
     - domain_roles
     - skip_missing: true
   environment: "{{ os_projects_environment }}"
@@ -71,3 +77,14 @@
     domain_is_id: "{{ project.user_domain in os_projects_domain_to_id.values() }}"
   loop_control:
     label: "{{ project.user_domain }}: {{ item.0.name }}: {{ item.1 }}"
+
+- name: Ensure openrc environment file exists
+  ansible.builtin.template:
+    src: openrc.j2
+    dest: "{{ item.openrc_file }}"
+    mode: "0600"
+  with_items: "{{ os_projects_project_all_users }}"
+  when: item.openrc_file is defined
+  loop_control:
+    label: "{{ project.name }}: {{ item.name }}"
+  delegate_to: localhost

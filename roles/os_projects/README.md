@@ -46,7 +46,7 @@ Each item should be a dict containing the following items:
   - `name`: The name of the user.
   - `description`: User name/description (optional)
   - `email`: User email address (optional)
-  - `password`: The user's password (optional). This is not updated after
+  - `password`: Optional password for the user. This is not updated after
     creation.
   - `roles`: Optional list of roles to assign to the user in the project.
   - `domain_roles`: Optional list of roles to assign to the user in the user
@@ -55,6 +55,26 @@ Each item should be a dict containing the following items:
   - `create_user`: Boolean to indicate whether or not to create the user.  Can
     be useful if the user already exists e.g the user is defined in LDAP.
     (optional)
+- `groups`: Optional list of groups to register. Each group should be a dict
+  containing the following items:
+  - `name`: The name of the group.
+  - `description`: Optional description for the group.
+  - `domain`: The domain of the group.
+  - `roles`: Optional list of roles to assign to the group in the project.
+  - `domain_roles`: Optional list of roles to assign to the group in the
+    group domain.
+  - `users`: Optional list of users to register. Each user should be a dict
+    containing the following items:
+    - `name`: The name of the user.
+    - `password`: Optional password for the user. This is not updated after
+      creation.
+    - `openrc_file`: Optional path to an environment file to create.
+    - `create_user`: Optional boolean (Default: true) to indicate whether to
+      create the user. This can be useful if the user already exists
+      (e.g. LDAP defined users).
+  - `create_group`: Optional boolean (Default: true) to indicate whether to
+    create the group. This can be useful if the group already exists
+    (e.g. LDAP defined groups).
 - `keypairs`: Optional list of SSH key pairs to register with Nova. Each key
   pair should be a dict containing the following items:
   - `name`: The name of the keypair.
@@ -101,11 +121,22 @@ resources.
               project_domain: default
               user_domain: default
               users:
-                - name: user1
+                - name: user1          # Keystone user definition
                   password: correcthorsebatterystaple
                   roles:
                     - admin
                   openrc_file: /home/user/user1.openrc
+              groups:
+                - name: group_a
+                  domain: default
+                  roles:
+                    - member
+                  users:
+                    - name: user1      # Keystone user defined above
+                    - name: user2      # Keystone user created for the group
+                      password: ashpineapplevictorcommand
+                    - name: user3      # User that already exists in the user_domain (e.g. LDAP)
+                      create_user: false
               keypairs:
                 - name: keypair1
                   public_key_file: /path/to/key
@@ -116,3 +147,4 @@ Author Information
 ------------------
 
 - Mark Goddard (<mark@stackhpc.com>)
+- Seunghun Lee (<seunghun@stackhpc.com>)

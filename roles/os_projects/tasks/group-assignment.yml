@@ -19,7 +19,6 @@
   environment: "{{ os_projects_environment }}"
   vars:
     user_domain_id: "{{ (project.user_domain in os_projects_domain_to_id.values()) | ternary(project.user_domain, os_projects_domain_to_id[project.user_domain]) }}"
-    project_domain_id: "{{ (project.project_domain in os_projects_domain_to_id.values()) | ternary(project.project_domain, os_projects_domain_to_id[project.project_domain]) }}"
   loop_control:
     label: "{{ item.0.name }}: {{ item.1.name }}"
     index_var: idx

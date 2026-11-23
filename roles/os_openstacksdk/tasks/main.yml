@@ -20,13 +20,38 @@
   become: "{{ ansible_facts.system != 'Darwin' }}"
   when: os_openstacksdk_install_package_dependencies | bool
 
+- name: Collect current os_openstacksdk_venv python
+  ansible.builtin.stat:
+    path: "{{ os_openstacksdk_venv ~ '/bin/python' }}"
+  register: _os_openstacksdk_venv_python_stat
+  failed_when: false
+  check_mode: false
+
+- name: Collect wanted os_openstacksdk_venv python
+  ansible.builtin.stat:
+    path: "{{ os_openstacksdk_virtualenv_python }}"
+  register: _os_openstacksdk_wanted_python_stat
+  failed_when: false
+  check_mode: false
+
 - name: Remove virtualenv if python version is stale
   ansible.builtin.file:
     path: "{{ os_openstacksdk_venv }}"
     state: absent
   when:
     - os_openstacksdk_venv is not none
-    - (os_openstacksdk_venv ~ '/bin/python') | realpath != os_openstacksdk_virtualenv_python | realpath
+    - _os_openstacksdk_venv_python_realpath != _os_openstacksdk_wanted_python_realpath
+  vars:
+    _os_openstacksdk_venv_python_realpath: >-
+      {{ '_os_openstacksdk_venv_python_undefined'
+        if (_os_openstacksdk_venv_python_stat.failed or not _os_openstacksdk_venv_python_stat.stat.exists)
+        else (_os_openstacksdk_venv_python_stat.stat.lnk_source if _os_openstacksdk_venv_python_stat.stat.islnk
+          else _os_openstacksdk_venv_python_stat.stat.path) }}
+    _os_openstacksdk_wanted_python_realpath: >-
+      {{ '_os_openstacksdk_wanted_python_undefined'
+        if (_os_openstacksdk_wanted_python_stat.failed or not _os_openstacksdk_wanted_python_stat.stat.exists)
+        else (_os_openstacksdk_wanted_python_stat.stat.lnk_source if _os_openstacksdk_wanted_python_stat.stat.islnk
+          else _os_openstacksdk_wanted_python_stat.stat.path) }}
 
 - name: Ensure the virtualenv directory exists
   when: os_openstacksdk_venv is not none
